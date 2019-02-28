@@ -14,7 +14,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="beerName" onKeyTyped="#textFieldChanged" />
             <HBox alignment="TOP_RIGHT">
                <children>
                   <Label prefWidth="70.0" text="Beer Id">
@@ -22,7 +22,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField editable="false" prefWidth="50.0" />
+                  <TextField fx:id="beerId" disable="true" editable="false" prefWidth="50.0" />
                </children>
                <HBox.margin>
                   <Insets left="100.0" />
@@ -37,7 +37,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="company" onKeyTyped="#textFieldChanged" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -47,7 +47,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="notes" onKeyTyped="#textFieldChanged" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -57,7 +57,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="style" onKeyTyped="#textFieldChanged" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -67,7 +67,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="abv" onKeyTyped="#textFieldChanged" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -77,7 +77,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField />
+            <TextField fx:id="ibu" onKeyTyped="#textFieldChanged" promptText="0" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -87,13 +87,13 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField prefWidth="100.0" />
+            <TextField fx:id="price1" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
             <Label prefWidth="60.0" text="Size 1">
                <HBox.margin>
                   <Insets bottom="5.0" left="100.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField prefWidth="100.0" />
+            <TextField fx:id="price1Size" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -103,13 +103,13 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField prefWidth="100.0" />
+            <TextField fx:id="price2" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
             <Label prefWidth="60.0" text="Size 2">
                <HBox.margin>
                   <Insets bottom="5.0" left="100.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField prefWidth="100.0" />
+            <TextField fx:id="price2Size" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
          </children>
       </HBox>
       <VBox alignment="TOP_CENTER" prefHeight="250.0" prefWidth="100.0">
@@ -119,12 +119,28 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Label>
-            <Pane maxHeight="192.0" maxWidth="540.0" prefHeight="192.0" prefWidth="540.0" />
+            <GridPane fx:id="previewPane" maxHeight="192.0" maxWidth="540.0" prefHeight="192.0" prefWidth="540.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
          </children>
          <VBox.margin>
             <Insets top="30.0" />
          </VBox.margin>
       </VBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onMouseClicked="#saveButtonClicked" prefWidth="75.0" text="Save">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
    </children>
    <padding>
       <Insets top="5.0" />

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.media.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -23,4 +24,7 @@
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
+   <cursor>
+      <Cursor fx:constant="NONE" />
+   </cursor>
 </GridPane>

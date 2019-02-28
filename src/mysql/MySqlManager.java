@@ -16,10 +16,11 @@ import java.util.Date;
  */
 public class MySqlManager {
 	
-	public String dbHost;
-	public String dbName;
-	private String dbUsername = "pi";
-	private String dbPassword = "pipassword";
+	public static String dbHost = "127.0.0.1";
+	public static String dbPort = "3306";
+	public static String dbName;
+	private static String dbUsername = "pi";
+	private static String dbPassword = "pipassword";
 	protected static boolean isDriverLoaded = false;
 
 	
@@ -27,22 +28,24 @@ public class MySqlManager {
 	 * Class Constructor
 	 */
 	public MySqlManager() {
-		this.dbHost = "127.0.0.1";
-		this.dbName = "churchill";
+		//this.dbHost = "127.0.0.1";
+		MySqlManager.dbName = "churchill";
 	}
 	/**
 	 * Class Constructor
 	 */
 	public MySqlManager(String dbHost, String dbName) {
-		this.dbHost = dbHost;
-		this.dbName = dbName;
+		this();
+		MySqlManager.dbHost = dbHost;
+		MySqlManager.dbName = dbName;
 	}
 	
 	public MySqlManager(String dbHost, String dbName, String dbUsername, String dbPassword) {
-		this.dbHost = dbHost;
-		this.dbName = dbName;
-		this.dbUsername = dbUsername;
-		this.dbPassword = dbPassword;
+		this();
+		MySqlManager.dbHost = dbHost;
+		MySqlManager.dbName = dbName;
+		MySqlManager.dbUsername = dbUsername;
+		MySqlManager.dbPassword = dbPassword;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -51,11 +54,19 @@ public class MySqlManager {
 		isDriverLoaded = true;
 	}
 	
+	public static void setUsername(String username) {
+		dbUsername = username;
+	}
+	
+	public static void setPassword(String password) {
+		dbPassword = password;
+	}
+	
 	/**
 	 * Starts a connection with the MySql server
 	 */
 	public Connection connect() {
-		return connect(this.dbUsername, this.dbPassword);
+		return connect(dbUsername, dbPassword);
 	}
 	public Connection connect(String username, String password) {
 		Connection c = null;
@@ -64,7 +75,7 @@ public class MySqlManager {
 				this.loadDriver();
 			}
 			//c = dataSource.getConnection();
-			c = DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName +"?" + "user=" + username + "&password=" + password);
+			c = DriverManager.getConnection("jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName +"?" + "user=" + username + "&password=" + password);
 		//this.rs = stmt.executeQuery("SELECT ID FROM USERS");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -152,7 +163,7 @@ public class MySqlManager {
 				if (keysReturned) {
 					rs = stmt.getGeneratedKeys();
 					if (rs.next()) {
-						key = rs.getInt(0);
+						key = rs.getInt(1);
 					}
 				}
 			} catch (Exception e) {
@@ -160,7 +171,8 @@ public class MySqlManager {
 			} finally {
 				try {
 					stmt.close();
-					rs.close();
+					if (rs != null)
+						rs.close();
 				}
 			catch (Exception e) {
 				e.printStackTrace();

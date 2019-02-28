@@ -5,13 +5,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.mysql.cj.exceptions.CJCommunicationsException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -33,7 +36,7 @@ public class MainMenuController {
 	@FXML
 	public TextField dbUsername;
 	@FXML
-	public TextField dbPassword;
+	private TextField dbPassword;
 	
 	@FXML
 	public ListView<BeerMenuItem> activeBeersListView;
@@ -48,17 +51,27 @@ public class MainMenuController {
 	
 	@FXML
 	public void initialize() {
-		dbHost.setText("192.168.2.246");
+		//dbHost.setText("192.168.2.246");
+		//MySqlManager.dbHost = "192.168.2.246";
 		//fillBeerLists();
+		MySqlManager.dbHost = dbHost.getText().trim();
+		MySqlManager.dbPort = dbPort.getText().trim();
+		MySqlManager.dbName = "churchill";
 	}
 	
 	@FXML
 	private void refreshConnection() {
+		MySqlManager.dbHost = dbHost.getText().trim();
+		MySqlManager.dbPort = dbPort.getText().trim();
+		if (dbUsername.getText().trim().length() > 0)
+			MySqlManager.setUsername(dbUsername.getText().trim());
+		if (dbPassword.getText().trim().length() > 0)
+			MySqlManager.setPassword(dbPassword.getText().trim());
 		fillBeerLists();
 	}
 	
 	public void fillBeerLists() {
-		MySqlManager sql = new MySqlManager(dbHost.getText() + ":" + dbPort.getText(), "churchill");
+		MySqlManager sql = new MySqlManager();
 		Connection conn = null;
 		ObservableList<BeerMenuItem> beerList = FXCollections.observableArrayList();
 		ObservableList<BeerMenuItem> activeBeerList = FXCollections.observableArrayList();
@@ -72,7 +85,7 @@ public class MainMenuController {
 				beerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), rs.getString("company"), rs.getString("notes"), 
 						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu")));
 			});
-			
+
 			queryString  = "SELECT * FROM price WHERE active = 1 ORDER BY beer_id DESC;";
 			sql.runQuery(conn, queryString, (rs) -> {
 				priceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size")));
@@ -80,12 +93,12 @@ public class MainMenuController {
 			
 			queryString  = "SELECT b.id, b.beer_name, b.company, b.notes, b.style, b.abv, b.ibu, "
 					+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
-					+ "FROM beer b "
-					+ "RIGHT JOIN active_beers ON b.id = active_beers.beer_id "
+					+ "FROM active_beers "
+					+ "LEFT JOIN beer b ON b.id = active_beers.beer_id "
 					+ "LEFT JOIN price p1 ON p1.id = active_beers.price_1_id "
 					+ "LEFT JOIN price p2 ON p2.id = active_beers.price_2_id "
 					+ "WHERE 1 "
-					+ "ORDER BY id ASC;";
+					+ "ORDER BY active_beers.id ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
 				activeBeerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), rs.getString("company"), rs.getString("notes"), 
 						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), 
@@ -93,6 +106,10 @@ public class MainMenuController {
 			});
 		
 			conn.close();
+		} catch (CJCommunicationsException e1) {
+			e1.printStackTrace();
+			System.out.println("not connected, aborting");
+			return;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -125,6 +142,57 @@ public class MainMenuController {
 		}
 		
 	}
+	
+	@FXML
+	private void swapSelected() {
+		if (allBeersListView.getSelectionModel().getSelectedItem() == null ||
+				activeBeersListView.getSelectionModel().getSelectedItem() == null) {
+			Alert alert = new Alert(AlertType.ERROR, 
+					"A beer from both columns must be selected");
+			alert.showAndWait();
+			return;
+		}
+		
+		BeerMenuItem newBeer = allBeersListView.getSelectionModel().getSelectedItem();
+		BeerMenuItem currentActiveBeer  = activeBeersListView.getSelectionModel().getSelectedItem();
+		
+		int currentActiveBeerIndex = 0;
+		ObservableList<BeerMenuItem> items = activeBeersListView.getItems();
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).equals(currentActiveBeer)) {
+				System.out.println("beer found");
+				items.remove(i);
+				items.add(i, newBeer);
+				activeBeersListView.setItems(items);
+				activeBeersListView.getSelectionModel().select(i);
+				currentActiveBeerIndex = i;
+				break;
+			}
+		}
+
+		// update the active beer in the database
+		try {
+			MySqlManager sql = new MySqlManager();
+			Connection conn = sql.connect();
+			int priceId1, priceId2;
+			if (newBeer.priceList.get(0).size < newBeer.priceList.get(1).size) {
+				priceId1 = newBeer.priceList.get(0).id;
+				priceId2 = newBeer.priceList.get(1).id;
+			} else {
+				priceId1 = newBeer.priceList.get(1).id;
+				priceId2 = newBeer.priceList.get(0).id;
+			}
+			//save current beer
+			String sqlQuery = "UPDATE active_beers SET beer_id = " + newBeer.id + ", "
+					+ "price_1_id = " + priceId1 + ", "
+					+ "price_2_id = " + priceId2 + " WHERE id = " + (currentActiveBeerIndex + 1) + ";";
+			sql.runInsertQuery(conn, sqlQuery);
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	
 	
@@ -151,14 +219,7 @@ public class MainMenuController {
 	@FXML
 	private void addBeerButton() {
 		try {
-			VBox layout = (VBox)FXMLLoader.load(getClass().getResource("EditBeer.fxml"));
-			Scene scene = new Scene(layout);
-			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			Stage stage = new Stage();
-			stage.setScene(scene);
-			stage.setFullScreen(true);
-			
-			stage.show();
+			launchEditBeerWindow();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -168,18 +229,56 @@ public class MainMenuController {
 	@FXML
 	private void editBeerButton() {
 		try {
-			VBox layout = (VBox)FXMLLoader.load(getClass().getResource("EditBeer.fxml"));
-			Scene scene = new Scene(layout);
-			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			Stage stage = new Stage();
-			stage.setScene(scene);
-			stage.setFullScreen(true);
+			EditBeerController editBeerController = launchEditBeerWindow();
+			if (allBeersListView.getSelectionModel().getSelectedItem() != null &&
+					editBeerController != null) {
+				BeerMenuItem b = allBeersListView.getSelectionModel().getSelectedItem();
+				editBeerController.beerItem = b;
+				editBeerController.setLayoutFields();
+				editBeerController.updatePreview();
+			}
 			
-			stage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private EditBeerController launchEditBeerWindow() {
+		EditBeerController editBeerController = null;
+		try {
+			FXMLLoader editBeerLoader = new FXMLLoader();
+			editBeerLoader.setLocation(getClass().getResource("EditBeer.fxml"));
+			VBox editBeerWindow = editBeerLoader.load();
+			editBeerController = editBeerLoader.getController();
+			
+			FXMLLoader beerLoader = new FXMLLoader();
+			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
+			VBox beerLayout = beerLoader.load();
+			BeerItemLayoutController beerItemController = beerLoader.getController();
+			beerLayout.setUserData(beerItemController);
+			
+			editBeerController.previewPane.add(beerLayout, 0, 0);
+			editBeerController.previewItemController = beerItemController;
+			
+			editBeerWindow.setUserData(editBeerController);
+			
+			Scene scene = new Scene(editBeerWindow);
+			
+			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.setOnCloseRequest( event ->
+		    {
+		        //refresh all beers list
+		    	fillBeerLists();
+		    });
+
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return editBeerController;
 	}
 	
 	
@@ -229,7 +328,7 @@ public class MainMenuController {
 		controller.price2.setText(item.price2);
 		controller.ounce2.setText("/" + item.price2Size);
 		
-		beerLayout.setUserData(controller);
+		//beerLayout.setUserData(controller);
 		
 	}
 }
