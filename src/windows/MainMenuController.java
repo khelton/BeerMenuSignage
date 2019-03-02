@@ -80,7 +80,7 @@ public class MainMenuController {
 		
 		try {
 			conn = sql.connect();
-			String queryString  = "SELECT * FROM beer ORDER BY beer_name ASC;";
+			String queryString  = "SELECT * FROM beer ORDER BY company ASC, beer_name ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
 				beerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), rs.getString("company"), rs.getString("notes"), 
 						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu")));

@@ -2,6 +2,7 @@ package mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -153,18 +154,16 @@ public class MySqlManager {
 	}
 	
 	public int runInsertQuery(Connection conn, String queryString) {
-		int key = 0;
+		int key = -1;
 		try {
 			System.out.println("Query:\n" + queryString);
-			Statement stmt = conn.createStatement();
+			PreparedStatement stmt = conn.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS);
 			ResultSet rs = null;
-			boolean keysReturned = stmt.execute(queryString, Statement.RETURN_GENERATED_KEYS);
+			stmt.execute();
 			try {
-				if (keysReturned) {
-					rs = stmt.getGeneratedKeys();
-					if (rs.next()) {
-						key = rs.getInt(1);
-					}
+				rs = stmt.getGeneratedKeys();
+				if (rs.next()) {
+					key = rs.getInt(1);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

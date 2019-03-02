@@ -91,7 +91,7 @@ public class BeerMenuItem {
 	
 	@Override
 	public String toString() {
-		return this.beerName;
+		return this.company + " - " + this.beerName;
 	}
 	
 }
