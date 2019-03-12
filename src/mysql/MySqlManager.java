@@ -76,7 +76,8 @@ public class MySqlManager {
 				this.loadDriver();
 			}
 			//c = dataSource.getConnection();
-			c = DriverManager.getConnection("jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName +"?" + "user=" + username + "&password=" + password);
+			c = DriverManager.getConnection("jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName +"?" + "user=" + username + "&password=" + password 
+					+ "&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 		//this.rs = stmt.executeQuery("SELECT ID FROM USERS");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
