@@ -3,6 +3,7 @@ package windows;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
@@ -15,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -39,6 +41,9 @@ public class MainMenuController {
 	private TextField dbPassword;
 	
 	@FXML
+	public CheckBox allCaps;
+	
+	@FXML
 	public ListView<BeerMenuItem> activeBeersListView;
 	@FXML
 	public ListView<BeerMenuItem> allBeersListView;
@@ -57,6 +62,8 @@ public class MainMenuController {
 		MySqlManager.dbHost = dbHost.getText().trim();
 		MySqlManager.dbPort = dbPort.getText().trim();
 		MySqlManager.dbName = "churchill";
+		
+		allCaps.setSelected(false);
 	}
 	
 	@FXML
@@ -270,8 +277,13 @@ public class MainMenuController {
 			stage.setScene(scene);
 			stage.setOnCloseRequest( event ->
 		    {
+		    	stage.close();
 		        //refresh all beers list
-		    	fillBeerLists();
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
 		    });
 
 			stage.show();
@@ -293,8 +305,14 @@ public class MainMenuController {
 		int i = 1;
 		for (int y = 0 ; y  < gridRows; y++) {
 			for (int x = 0 ; x  < gridCols; x++) {
-				if (activeBeerList.get(i-1) == null)
-					return;
+				BeerMenuItem item = null;
+				if (activeBeerList.size() < i) {
+					item = new BeerMenuItem();
+				} else if (activeBeerList.get(i-1) == null) {
+					item = new BeerMenuItem();
+				} else {
+					item = activeBeerList.get(i-1);
+				}
 				VBox beerLayout = null;
 				try {
 					FXMLLoader beerLoader = new FXMLLoader();
@@ -304,7 +322,7 @@ public class MainMenuController {
 					beerLayout.setUserData(controller);
 					//beerLayoutList.add(beerLayout);
 					//beerControllerList.add(controller);
-					fillBeerLayout(beerLayout, controller, activeBeerList.get(i-1));
+					fillBeerLayout(beerLayout, controller, item, i);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -316,16 +334,19 @@ public class MainMenuController {
 	}
 	
 	
-	public void fillBeerLayout(VBox beerLayout, BeerItemLayoutController controller, BeerMenuItem item) {
+	public void fillBeerLayout(VBox beerLayout, BeerItemLayoutController controller, BeerMenuItem item, int beerNumber) {
 		controller.beerItem = item;
-		controller.beerName.setText(item.beerName);
+		item.beerNumber = beerNumber;
+		DecimalFormat df = new DecimalFormat("0.00");
+		controller.beerNumber.setText("" + item.beerNumber);
+		controller.beerName.setText((allCaps.isSelected()) ? item.beerName.toUpperCase() : item.beerName);
 		controller.company.setText(item.company);
 		controller.notes.setText(item.notes);
 		controller.beerStyle.setText(item.style);
-		controller.abv.setText(item.abv);
-		controller.price1.setText(item.price1);
+		controller.abv.setText("" + item.abv);
+		controller.price1.setText((item.price1 == -1) ? "NA" : df.format(item.price1));
 		controller.ounce1.setText("/" + item.price1Size);
-		controller.price2.setText(item.price2);
+		controller.price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));
 		controller.ounce2.setText("/" + item.price2Size);
 		
 		//beerLayout.setUserData(controller);

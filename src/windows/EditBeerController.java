@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import menulayouts.BeerItemLayoutController;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
@@ -88,13 +89,26 @@ public class EditBeerController {
 	}
 	
 	public void saveButtonClicked() {
-		if(saveRecord())
+		boolean saved = false;
+		try {
+			saved = saveRecord();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(saved) {
 			closeWindow();
+		} 
 	}
 	
 	private void closeWindow() {
 		Stage stage = (Stage) saveButton.getScene().getWindow();
-	    stage.close();
+	    //stage.close();
+	    stage.fireEvent(
+                new WindowEvent(
+                        stage,
+                        WindowEvent.WINDOW_CLOSE_REQUEST
+                )
+        );
 	}
 	
 	public boolean saveRecord() {

@@ -1,5 +1,7 @@
 package menulayouts;
 
+import java.text.DecimalFormat;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -8,6 +10,8 @@ import types.BeerMenuItem;
 
 public class BeerItemLayoutController {
 	
+	@FXML
+	public Label beerNumber;
 	@FXML
 	public Label beerName;
 	@FXML
@@ -40,15 +44,17 @@ public class BeerItemLayoutController {
 	
 	
 	public void fillBeerLayout(BeerMenuItem item, GridPane pane) {
+		DecimalFormat df = new DecimalFormat("0.00");
 		beerItem = item;
+		beerNumber.setText("" + item.beerNumber);
 		beerName.setText(item.beerName);
 		company.setText(item.company);
 		notes.setText(item.notes);
 		beerStyle.setText(item.style);
-		abv.setText(item.abv);
-		price1.setText(item.price1);
+		abv.setText("" + item.abv);
+		price1.setText((item.price1 == -1) ? "NA" : df.format(item.price1));
 		ounce1.setText("/" + item.price1Size);
-		price2.setText(item.price2);
+		price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));
 		ounce2.setText("/" + item.price2Size);
 		
 		pane.setUserData(this);

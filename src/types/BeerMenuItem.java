@@ -5,19 +5,23 @@ import java.util.ArrayList;
 public class BeerMenuItem {
 
 	public int 		id;
-	public String 	beerName;
-	public String 	company;
-	public String 	notes;
-	public String 	style;
-	public String 	abv;
-	public String	ibu;
-	public String 	price1;
-	public String 	price1Size;
-	public String 	price2;
-	public String 	price2Size;
+	public int 		beerNumber = 0;
+	public String 	beerName = "Name";
+	public String 	company = "Company";
+	public String 	notes = "Notes";
+	public String 	style = "Style";
+	public double 	abv = 5;
+	public int		ibu = 0;
+	public double 	price1 = -1;
+	public int	 	price1Size = 16;
+	public double 	price2 = -1;
+	public int	 	price2Size = 20;
 	
 	public ArrayList<ItemPrice> priceList;
 	
+	public BeerMenuItem() {
+		priceList = new ArrayList<ItemPrice>();
+	}
 	
 	public BeerMenuItem(int id, String beerName, String company, String notes, String style, double abv, int ibu) {
 		
@@ -26,12 +30,8 @@ public class BeerMenuItem {
 		this.company = 		company;
 		this.notes = 		notes;
 		this.style = 		style;
-		this.abv = 			String.valueOf(abv);
-		this.ibu = 			String.valueOf(ibu);
-		this.price1 = 		"NA";
-		this.price1Size = 	"NA";
-		this.price2 = 		"NA";
-		this.price2Size = 	"NA";
+		this.abv = 			abv;
+		this.ibu = 			ibu;
 		
 		priceList = new ArrayList<ItemPrice>();
 	}
@@ -44,12 +44,12 @@ public class BeerMenuItem {
 		this.company = 		company;
 		this.notes = 		notes;
 		this.style = 		style;
-		this.abv = 			String.valueOf(abv);
-		this.ibu = 			String.valueOf(ibu);
-		this.price1 = 		String.valueOf(price1);
-		this.price1Size = 	String.valueOf(price1Size);
-		this.price2 = 		String.valueOf(price2);
-		this.price2Size = 	String.valueOf(price2Size);
+		this.abv = 			abv;
+		this.ibu = 			ibu;
+		this.price1 = 		price1;
+		this.price1Size = 	price1Size;
+		this.price2 = 		price2;
+		this.price2Size = 	price2Size;
 
 		priceList = new ArrayList<ItemPrice>();
 		
@@ -77,15 +77,15 @@ public class BeerMenuItem {
 	
 	public void resolvePrices(double price1, int price1Size, double price2, int price2Size) {
 		if (price1Size < price2Size) {
-			this.price1 = 		String.valueOf(price1);
-			this.price1Size = 	String.valueOf(price1Size);
-			this.price2 = 		String.valueOf(price2);
-			this.price2Size = 	String.valueOf(price2Size);
+			this.price1 = 		price1;
+			this.price1Size = 	price1Size;
+			this.price2 = 		price2;
+			this.price2Size = 	price2Size;
 		} else {
-			this.price1 = 		String.valueOf(price2);
-			this.price1Size = 	String.valueOf(price2Size);
-			this.price2 = 		String.valueOf(price1);
-			this.price2Size = 	String.valueOf(price1Size);
+			this.price1 = 		price2;
+			this.price1Size = 	price2Size;
+			this.price2 = 		price1;
+			this.price2Size = 	price1Size;
 		}
 	}
 	

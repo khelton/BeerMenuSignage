@@ -10,7 +10,7 @@
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="216.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="menulayouts.BeerItemLayoutController">
    <children>
-      <VBox alignment="CENTER" style="-fx-border-color: #999999; -fx-border-radius: 30; -fx-border-width: 3; -fx-background-color: #555555; -fx-background-radius: 30;">
+      <VBox alignment="CENTER" style="-fx-border-color: #777777; -fx-border-radius: 30; -fx-border-width: 3; -fx-background-color: #333333; -fx-background-radius: 30;">
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </VBox.margin>
@@ -24,18 +24,30 @@
                      <children>
                         <VBox>
                            <children>
-                              <Label fx:id="beerName" alignment="TOP_LEFT" text="Beer Name longer name" textFill="WHITE">
-                                 <font>
-                                    <Font name="Megan June" size="50.0" />
-                                 </font>
-                              </Label>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label fx:id="beerNumber" alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="40.0" text="20" textAlignment="CENTER" textFill="WHITE">
+                                       <font>
+                                          <Font name="Megan June" size="50.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="beerName" alignment="TOP_LEFT" text="Beer Name longer name" textFill="WHITE">
+                                       <font>
+                                          <Font name="Megan June" size="50.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
                               <HBox>
                                  <children>
-                                    <VBox alignment="CENTER_LEFT" prefWidth="200.0">
+                                    <VBox alignment="CENTER_LEFT" prefWidth="180.0">
                                        <children>
                                           <Label id="company" fx:id="company" text="Company" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font name="Megan June" size="25.0" />
+                                                <Font name="Megan June" size="30.0" />
                                              </font>
                                              <VBox.margin>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -43,7 +55,7 @@
                                           </Label>
                                           <Label id="notes" fx:id="notes" text="Notes" textFill="WHITE" wrapText="true">
                                              <font>
-                                                <Font name="Megan June" size="25.0" />
+                                                <Font name="Megan June" size="30.0" />
                                              </font>
                                              <VBox.margin>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -57,7 +69,7 @@
                                              <children>
                                                 <Label id="beerStyle" fx:id="beerStyle" alignment="BOTTOM_RIGHT" contentDisplay="CENTER" text="Style" textFill="WHITE">
                                                    <font>
-                                                      <Font name="Megan June" size="25.0" />
+                                                      <Font name="Megan June" size="30.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -66,25 +78,33 @@
                                              <children>
                                                 <Label id="abv" fx:id="abv" text="15.0" textFill="WHITE">
                                                    <font>
-                                                      <Font name="Megan June" size="40.0" />
+                                                      <Font name="Megan June" size="45.0" />
                                                    </font>
                                                 </Label>
                                                 <Label alignment="BOTTOM_LEFT" text="\%" textFill="WHITE">
                                                    <font>
-                                                      <Font name="Megan June" size="30.0" />
+                                                      <Font name="Megan June" size="35.0" />
                                                    </font>
                                                 </Label>
                                              </children>
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="140.0">
+                                    <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="160.0">
                                        <children>
-                                          <HBox alignment="BOTTOM_RIGHT" prefWidth="200.0">
+                                          <HBox alignment="BOTTOM_RIGHT" prefWidth="220.0">
                                              <children>
-                                                <Label id="price1" fx:id="price1" text="7.5" textFill="#c5a800">
+                                                <Label id="price1" text="\$" textFill="#c5a800">
                                                    <font>
-                                                      <Font name="Megan June" size="60.0" />
+                                                      <Font name="Megan June" size="55.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets right="4.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <Label id="price1" fx:id="price1" text="12.50" textFill="#c5a800">
+                                                   <font>
+                                                      <Font name="Megan June" size="55.0" />
                                                    </font>
                                                 </Label>
                                                 <Label id="ounce1" fx:id="ounce1" alignment="BOTTOM_LEFT" prefWidth="40.0" text="/16" textFill="WHITE">
@@ -96,9 +116,17 @@
                                           </HBox>
                                           <HBox alignment="BOTTOM_RIGHT" prefWidth="200.0">
                                              <children>
+                                                <Label id="price1" text="\$" textFill="#c5a800">
+                                                   <font>
+                                                      <Font name="Megan June" size="55.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets right="4.0" />
+                                                   </HBox.margin>
+                                                </Label>
                                                 <Label id="price2" fx:id="price2" text="8" textFill="#c5a800">
                                                    <font>
-                                                      <Font name="Megan June" size="60.0" />
+                                                      <Font name="Megan June" size="55.0" />
                                                    </font>
                                                 </Label>
                                                 <Label id="ounce2" fx:id="ounce2" alignment="BOTTOM_LEFT" prefWidth="40.0" text="/20" textFill="WHITE">
