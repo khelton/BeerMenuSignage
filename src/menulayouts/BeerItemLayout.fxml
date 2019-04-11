@@ -26,12 +26,12 @@
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Label fx:id="beerNumber" alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="40.0" text="20" textAlignment="CENTER" textFill="WHITE">
+                                    <Label fx:id="beerNumber" alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="50.0" text="20." textAlignment="CENTER" textFill="WHITE">
                                        <font>
                                           <Font name="Megan June" size="50.0" />
                                        </font>
                                        <HBox.margin>
-                                          <Insets right="10.0" />
+                                          <Insets right="5.0" />
                                        </HBox.margin>
                                     </Label>
                                     <Label fx:id="beerName" alignment="TOP_LEFT" text="Beer Name longer name" textFill="WHITE">

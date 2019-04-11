@@ -43,10 +43,12 @@ public class BeerItemLayoutController {
 	}
 	
 	
+	
 	public void fillBeerLayout(BeerMenuItem item, GridPane pane) {
+		// TODO get rid of grid pane
 		DecimalFormat df = new DecimalFormat("0.00");
 		beerItem = item;
-		beerNumber.setText("" + item.beerNumber);
+		beerNumber.setText("" + item.beerNumber + ".");
 		beerName.setText(item.beerName);
 		company.setText(item.company);
 		notes.setText(item.notes);
@@ -57,7 +59,6 @@ public class BeerItemLayoutController {
 		price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));
 		ounce2.setText("/" + item.price2Size);
 		
-		pane.setUserData(this);
 	}
 	
 }

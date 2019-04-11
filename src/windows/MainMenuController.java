@@ -320,8 +320,6 @@ public class MainMenuController {
 					beerLayout = beerLoader.load();
 					BeerItemLayoutController controller = beerLoader.getController();
 					beerLayout.setUserData(controller);
-					//beerLayoutList.add(beerLayout);
-					//beerControllerList.add(controller);
 					fillBeerLayout(beerLayout, controller, item, i);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -335,21 +333,10 @@ public class MainMenuController {
 	
 	
 	public void fillBeerLayout(VBox beerLayout, BeerItemLayoutController controller, BeerMenuItem item, int beerNumber) {
+		//TODO get rid of this method, it shouldn't be needed
 		controller.beerItem = item;
 		item.beerNumber = beerNumber;
-		DecimalFormat df = new DecimalFormat("0.00");
-		controller.beerNumber.setText("" + item.beerNumber);
-		controller.beerName.setText((allCaps.isSelected()) ? item.beerName.toUpperCase() : item.beerName);
-		controller.company.setText(item.company);
-		controller.notes.setText(item.notes);
-		controller.beerStyle.setText(item.style);
-		controller.abv.setText("" + item.abv);
-		controller.price1.setText((item.price1 == -1) ? "NA" : df.format(item.price1));
-		controller.ounce1.setText("/" + item.price1Size);
-		controller.price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));
-		controller.ounce2.setText("/" + item.price2Size);
-		
-		//beerLayout.setUserData(controller);
+		controller.fillBeerLayout(item, null);
 		
 	}
 }
