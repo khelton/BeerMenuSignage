@@ -76,12 +76,12 @@
                                           </VBox>
                                           <HBox alignment="CENTER" prefWidth="200.0">
                                              <children>
-                                                <Label id="abv" fx:id="abv" text="15.0" textFill="#77ffff">
+                                                <Label id="abv" fx:id="abv" text="15.0" textFill="#55aaff">
                                                    <font>
                                                       <Font name="Megan June" size="45.0" />
                                                    </font>
                                                 </Label>
-                                                <Label alignment="BOTTOM_LEFT" text="\%" textFill="#77ffff">
+                                                <Label alignment="BOTTOM_LEFT" text="\%" textFill="#55aaff">
                                                    <font>
                                                       <Font name="Megan June" size="35.0" />
                                                    </font>
