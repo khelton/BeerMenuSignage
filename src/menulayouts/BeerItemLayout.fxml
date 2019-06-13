@@ -76,12 +76,12 @@
                                           </VBox>
                                           <HBox alignment="CENTER" prefWidth="200.0">
                                              <children>
-                                                <Label id="abv" fx:id="abv" text="15.0" textFill="WHITE">
+                                                <Label id="abv" fx:id="abv" text="15.0" textFill="#77ffff">
                                                    <font>
                                                       <Font name="Megan June" size="45.0" />
                                                    </font>
                                                 </Label>
-                                                <Label alignment="BOTTOM_LEFT" text="\%" textFill="WHITE">
+                                                <Label alignment="BOTTOM_LEFT" text="\%" textFill="#77ffff">
                                                    <font>
                                                       <Font name="Megan June" size="35.0" />
                                                    </font>
@@ -102,7 +102,7 @@
                                                       <Insets right="4.0" />
                                                    </HBox.margin>
                                                 </Label>
-                                                <Label id="price1" fx:id="price1" text="12.50" textFill="#c5a800">
+                                                <Label id="price1" fx:id="price1" text="9.00" textFill="#c5a800">
                                                    <font>
                                                       <Font name="Megan June" size="55.0" />
                                                    </font>
@@ -124,7 +124,7 @@
                                                       <Insets right="4.0" />
                                                    </HBox.margin>
                                                 </Label>
-                                                <Label id="price2" fx:id="price2" text="8" textFill="#c5a800">
+                                                <Label id="price2" fx:id="price2" text="12.50" textFill="#c5a800">
                                                    <font>
                                                       <Font name="Megan June" size="55.0" />
                                                    </font>

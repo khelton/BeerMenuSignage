@@ -14,7 +14,7 @@ import javafx.fxml.FXMLLoader;
 
 public class Main extends Application {
 	
-	public int beerNumber;
+	//public int beerNumber;
 	public ArrayList<BeerItemLayoutController> beerControllerList;
 	public ArrayList<VBox> beerLayoutList;
 	public ArrayList<BeerMenuItem> beerItemList;
@@ -26,7 +26,7 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		this.beerNumber = 1;
+		//this.beerNumber = 1;
 		beerControllerList = new ArrayList<BeerItemLayoutController>();
 		beerLayoutList = new ArrayList<VBox>();
 		beerItemList = new ArrayList<BeerMenuItem>();
@@ -40,14 +40,7 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			controller.fillBeerLists();
-			/*
-			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
-			beerLayout = beerLoader.load();
-			BeerItemLayoutController controller = beerLoader.getController();
-			beerLayout.setUserData(controller);
-			*/
+			controller.fillBeerListBoxes();
 			
 		} catch(Exception e) {
 			e.printStackTrace();

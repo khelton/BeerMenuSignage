@@ -3,7 +3,6 @@ package windows;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
@@ -74,16 +73,15 @@ public class MainMenuController {
 			MySqlManager.setUsername(dbUsername.getText().trim());
 		if (dbPassword.getText().trim().length() > 0)
 			MySqlManager.setPassword(dbPassword.getText().trim());
-		fillBeerLists();
+		fillBeerListBoxes();
 	}
 	
-	public void fillBeerLists() {
+	public void fillBeerListBoxes() {
 		MySqlManager sql = new MySqlManager();
 		Connection conn = null;
 		ObservableList<BeerMenuItem> beerList = FXCollections.observableArrayList();
 		ObservableList<BeerMenuItem> activeBeerList = FXCollections.observableArrayList();
 		ArrayList<ItemPrice> priceList = new ArrayList<ItemPrice>();
-		//ObservableList<BeerMenuItem> beerObservableList = (ObservableList<BeerMenuItem>) beerList;
 		
 		try {
 			conn = sql.connect();
@@ -206,7 +204,7 @@ public class MainMenuController {
 	@FXML
 	private void launchFullScreenMenu() {
 		try {
-			GridPane grid = (GridPane)FXMLLoader.load(getClass().getResource("MenuFullScreen.fxml"));
+			GridPane grid = (GridPane)FXMLLoader.load(getClass().getResource("Menu_Grid4X5.fxml"));
 			fillGridPane(grid);
 			Scene scene2 = new Scene(grid);
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
