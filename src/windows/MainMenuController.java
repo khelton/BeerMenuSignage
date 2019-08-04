@@ -23,6 +23,7 @@ import menulayouts.BeerItemLayoutController;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
+import types.ItemPriceType;
 
 
 public class MainMenuController {
@@ -82,32 +83,48 @@ public class MainMenuController {
 		ObservableList<BeerMenuItem> beerList = FXCollections.observableArrayList();
 		ObservableList<BeerMenuItem> activeBeerList = FXCollections.observableArrayList();
 		ArrayList<ItemPrice> priceList = new ArrayList<ItemPrice>();
+		ArrayList<ItemPriceType> priceTypeList = new ArrayList<ItemPriceType>();
 		
 		try {
 			conn = sql.connect();
 			String queryString  = "SELECT * FROM beer ORDER BY company ASC, beer_name ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
-				beerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), rs.getString("company"), rs.getString("notes"), 
-						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu")));
-			});
-
-			queryString  = "SELECT * FROM price WHERE active = 1 ORDER BY beer_id DESC;";
-			sql.runQuery(conn, queryString, (rs) -> {
-				priceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size")));
+				beerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
+						rs.getString("beer_name_color"), rs.getString("company"), rs.getString("notes"), 
+						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), rs.getDouble("srm"), 
+						rs.getString("beer_pour_color")));
 			});
 			
-			queryString  = "SELECT b.id, b.beer_name, b.company, b.notes, b.style, b.abv, b.ibu, "
-					+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
+			queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
+			sql.runQuery(conn, queryString, (rs) -> {
+				priceTypeList.add(new ItemPriceType(rs.getInt("id"), rs.getString("name")));
+			});
+
+			queryString  = "SELECT price.*, price_type.name as 'price_type_name', "
+					+ "`schedule`.time_start as s_start, `schedule`.time_end as s_end, `schedule`.days_string as s_days "
+					+ "FROM price "
+					+ "LEFT JOIN price_type ON price_type.id = price.price_type_id "
+					+ "LEFT JOIN schedule ON schedule.id = price_type.schedule_id "
+					+ "WHERE price.active = 1 ORDER BY beer_id DESC, rank DESC;";
+			sql.runQuery(conn, queryString, (rs) -> {
+				priceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getInt("rank"), rs.getDouble("price"), rs.getInt("size"), 
+						new ItemPriceType(rs.getInt("price_type_id"), rs.getString("price_type_name")), rs.getInt("enabled")));
+			});
+			
+			queryString  = "SELECT b.id, b.beer_name, b.beer_name_color, b.company, b.notes, b.style, b.abv, b.ibu, "
+					+ "b.srm, b.pour_color "
+					//+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
 					+ "FROM active_beers "
 					+ "LEFT JOIN beer b ON b.id = active_beers.beer_id "
-					+ "LEFT JOIN price p1 ON p1.id = active_beers.price_1_id "
-					+ "LEFT JOIN price p2 ON p2.id = active_beers.price_2_id "
+					//+ "LEFT JOIN price p1 ON p1.id = active_beers.price_1_id "
+					//+ "LEFT JOIN price p2 ON p2.id = active_beers.price_2_id "
 					+ "WHERE 1 "
 					+ "ORDER BY active_beers.id ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
-				activeBeerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), rs.getString("company"), rs.getString("notes"), 
-						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), 
-						rs.getDouble("price1"), rs.getInt("size1"), rs.getDouble("price2"), rs.getInt("size2")));
+				activeBeerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
+						rs.getString("beer_name_color"), rs.getString("company"), rs.getString("notes"), 
+						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), rs.getDouble("srm"), 
+						rs.getString("beer_pour_color")));
 			});
 		
 			conn.close();
@@ -119,6 +136,8 @@ public class MainMenuController {
 			e1.printStackTrace();
 		}
 		
+		@SuppressWarnings("unchecked")
+		ArrayList<ItemPrice> activeBeersPriceList =   (ArrayList<ItemPrice>) priceList.clone();
 		if (beerList != null && beerList.size() > 0) {
 			for(BeerMenuItem b : beerList) {
 				for (int i = priceList.size() - 1; i >= 0; i--) {
@@ -128,8 +147,10 @@ public class MainMenuController {
 					}
 				}
 			}
+			allBeersListView.setItems(beerList);
+			/*
 			for(BeerMenuItem b : beerList) {
-				b.resolvePrices();
+				//b.resolvePrices();
 			}
 			allBeersListView.setItems(beerList);
 			for(BeerMenuItem b : beerList) {
@@ -139,10 +160,18 @@ public class MainMenuController {
 						priceList.remove(i);
 					}
 				}
-			}
+			}*/
 		}
 		
-		if (activeBeerList != null) {
+		if (activeBeerList != null && activeBeerList.size() > 0) {
+			for(BeerMenuItem b : activeBeerList) {
+				for (int i = activeBeersPriceList.size() - 1; i >= 0; i--) {
+					if (activeBeersPriceList.get(i).beerId == b.id) {
+						b.addPrice(activeBeersPriceList.get(i));
+						activeBeersPriceList.remove(i);
+					}
+				}
+			}
 			activeBeersListView.setItems(activeBeerList);
 		}
 		

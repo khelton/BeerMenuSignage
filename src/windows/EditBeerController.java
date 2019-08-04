@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -27,7 +29,11 @@ public class EditBeerController {
 	@FXML
 	public TextField beerName;
 	@FXML
+	public ColorPicker beerNameColor;
+	@FXML
 	public TextField company;
+	@FXML
+	public TextField location;
 	@FXML
 	public TextField notes;
 	@FXML
@@ -36,6 +42,19 @@ public class EditBeerController {
 	public TextField abv;
 	@FXML
 	public TextField ibu;
+	@FXML
+	public TextField srmText;
+	@FXML
+	public ColorPicker srmColor;
+	
+	@FXML
+	public Button selectLogoButton;
+	@FXML
+	public Label logoPath;
+	
+	@FXML
+	public Button pricesButton;
+	
 	@FXML
 	public TextField price1;
 	@FXML
@@ -47,6 +66,8 @@ public class EditBeerController {
 	
 	@FXML
 	public Button saveButton;
+	@FXML
+	public Button saveAndCloseButton;
 	
 	@FXML
 	public GridPane previewPane;
@@ -76,6 +97,10 @@ public class EditBeerController {
 		style.setText(b.style);
 		abv.setText(""+ b.abv);
 		ibu.setText(""+ b.ibu);
+		//TODO 
+		for (int i = 0 ; i < b.priceList.size() ; i++ ) {
+			
+		}
 		b.resolvePrices();
 		price1.setText(""+ b.price1);
 		price1Size.setText(""+ b.price1Size);
@@ -89,6 +114,14 @@ public class EditBeerController {
 	}
 	
 	public void saveButtonClicked() {
+		try {
+			saveRecord();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveAndCloseButtonClicked() {
 		boolean saved = false;
 		try {
 			saved = saveRecord();
@@ -135,15 +168,20 @@ public class EditBeerController {
 				Connection conn = sql.connect();
 				int beerItemId = 0;
 				String sqlQuery = "INSERT INTO beer "
-						+ "(beer_name, company, notes, style, abv, ibu) VALUES "
-						+ "('" + beerItem.beerName + "', '" + beerItem.company + "', '" + beerItem.notes + "',"
+						+ "(beer_name, beer_name_color, company, location, notes, style, abv, ibu, srm, beer_color) VALUES "
+						+ "('" + beerItem.beerName + "', '" + beerItem.beerNameColor + "', '" + beerItem.company + "', '" + beerItem.notes + "',"
 						+ " '" + beerItem.style + "', " + beerItem.abv + ", " + beerItem.ibu + ");";
 				beerItemId = sql.runInsertQuery(conn, sqlQuery);
 				
 				sqlQuery = "INSERT INTO price "
-						+ "(beer_id, price, size) VALUES "
-						+ "(" + beerItemId + ", " + beerItem.price1 + ", " + beerItem.price1Size + "), "
-						+ "(" + beerItemId + ", " + beerItem.price2 + ", " + beerItem.price2Size + ");";
+						+ "(beer_id, price, size, price_type_id) VALUES ";
+				for (int i = 0 ; i < beerItem.priceList.size() - 1 ; i++ ) {
+					ItemPrice p = beerItem.priceList.get(i);
+					sqlQuery += "(" + beerItemId + ", " + p.price + ", " + p.size + ", " + p.priceTypeId + "), ";
+				}
+				ItemPrice p = beerItem.priceList.get(beerItem.priceList.size() - 1);
+				sqlQuery += "(" + beerItemId + ", " + p.price + ", " + p.size + ", " + p.priceTypeId + ");";
+						
 				sql.runInsertQuery(conn, sqlQuery);
 				
 				beerItem.id = beerItemId;
@@ -162,32 +200,40 @@ public class EditBeerController {
 				String sqlQuery = "UPDATE beer SET beer_name = '" + beerItem.beerName + "', "
 						+ "beer_name = '" + beerItem.beerName + "', "
 						+ "company = '" + beerItem.company + "', "
+						+ "location = '" + beerItem.location + "', "
 						+ "notes = '" + beerItem.notes + "', "
 						+ "style = '" + beerItem.style + "', "
 						+ "abv = " + beerItem.abv + ", "
 						+ "ibu = " + beerItem.ibu + " WHERE id = " + beerItem.id + ";";
 				sql.runInsertQuery(conn, sqlQuery);
 				
-				int priceId = 0;
-				ArrayList<ItemPrice> tempPriceList = new ArrayList<ItemPrice>();
-				sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND size = " + beerItem.price1Size + ";";
-				sql.runQuery(conn, sqlQuery, (rs) -> {
-					tempPriceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size")));
-				});
-				priceId = tempPriceList.get(0).id;
-				if (priceId > 0) {
-					sqlQuery = "UPDATE price SET price = " + beerItem.price1 + ", size = " + beerItem.price1Size + " "
-							+ "WHERE id = " +  priceId + ";";
-				} else {
-					sqlQuery = "INSERT INTO price (beer_id, price, size) VALUES "
-							+ "('" + beerItem.id + "', '" + beerItem.price1 + "', '" + beerItem.price1Size + "');";
+				//int priceId = 0;
+				//ArrayList<ItemPrice> tempPriceList = new ArrayList<ItemPrice>();
+				for (ItemPrice p : beerItem.priceList) {
+					ItemPrice tempPrice = null;
+					sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND price_type_id = " + p.priceTypeId 
+							+ " AND size = " + p.size +";";
+					sql.runQuery(conn, sqlQuery, (rs) -> {
+						 tempPrice = new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size"), 
+								rs.getInt("price_type_id"), rs.getString("price_type_name"));
+					});
+					//priceId = tempPriceList.get(0).id;
+					if (tempPrice != null) {
+						sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + " "
+								+ "WHERE id = " +  p.id + ";";
+					} else {
+						sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id) VALUES "
+								+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceTypeId +"');";
+					}
+					sql.runInsertQuery(conn, sqlQuery);
 				}
-				sql.runInsertQuery(conn, sqlQuery);
+				/*
 				tempPriceList.remove(0);
 				
 				sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND size = " + beerItem.price2Size + ";";
 				sql.runQuery(conn, sqlQuery, (rs) -> {
-					tempPriceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size")));
+					tempPriceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size"), 
+							rs.getInt("price_type_id"), rs.getString("price_type_name")));
 				});
 				priceId = tempPriceList.get(0).id;
 				if (priceId > 0) {
@@ -198,6 +244,7 @@ public class EditBeerController {
 							+ "('" + beerItem.id + "', '" + beerItem.price2 + "', '" + beerItem.price2Size + "');";
 				}
 				sql.runInsertQuery(conn, sqlQuery);
+				*/
 				
 				//use price list, update prices
 				
@@ -248,6 +295,19 @@ public class EditBeerController {
 		}
 		return retVal;
 	}
+	/*
+	 * TODO implement srmCheck
+	 */
+	public int srmCheck() {
+		int retVal = 0;
+		try {
+			retVal = Integer.valueOf(srmText.getText());
+		} catch (Exception e) {
+			// do nothing, this is not required
+			//errorMessage += "\nNot a valid number in IBU field";
+		}
+		return retVal;
+	}
 	public double priceCheck(TextField price, int priceNumber) {
 		double retVal = 0;
 		try {
@@ -283,10 +343,21 @@ public class EditBeerController {
 			if (e.getSource().equals(beerName)) {
 				previewItemController.beerName.setText(beerName.getText());
 			}
+			/*
+			 * TODO implement beerNameColor
+			if (e.getSource().equals(beerNameColor)) {
+				previewItemController.beerNameColor.setText(beerNameColor);
+			}*/
 			
 			if (e.getSource().equals(company)) {
 				previewItemController.company.setText(company.getText());
 			}
+			
+			/*
+			 * TODO implement location
+			if (e.getSource().equals(location)) {
+				previewItemController.location.setText(location.getText());
+			}*/
 			
 			if (e.getSource().equals(notes)) {
 				previewItemController.notes.setText(notes.getText());
@@ -299,6 +370,23 @@ public class EditBeerController {
 			if (e.getSource().equals(abv)) {
 				previewItemController.abv.setText(abv.getText());
 			}
+			/*
+			 * TODO implement srmText
+			if (e.getSource().equals(srmText)) {
+				previewItemController.srm.setText(srmText.getText());
+			}*/
+			
+			/*
+			 * TODO implement srmColor
+			if (e.getSource().equals(srmColor)) {
+				previewItemController.srmColor.setText(srmColor);
+			}*/
+			
+			/*
+			 * TODO implement button to selec/save logos
+			if (e.getSource().equals(abv)) {
+				previewItemController.srm.setText(srmText.getText());
+			}*/
 			
 			if (e.getSource().equals(price1)) {
 				previewItemController.price1.setText(price1.getText());

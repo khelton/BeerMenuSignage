@@ -7,15 +7,19 @@ public class BeerMenuItem {
 	public int 		id;
 	public int 		beerNumber = 0;
 	public String 	beerName = "Name";
+	public String	beerNameColor = "#FFFFFF";
 	public String 	company = "Company";
+	public String 	location = "Company";
 	public String 	notes = "Notes";
 	public String 	style = "Style";
 	public double 	abv = 5;
 	public int		ibu = 0;
-	public double 	price1 = -1;
-	public int	 	price1Size = 16;
-	public double 	price2 = -1;
-	public int	 	price2Size = 20;
+	public double	srm = 10;
+	public String	beerPourColor = "#FFDD00";
+	//public double 	price1 = -1;
+	//public int	 	price1Size = 16;
+	//public double 	price2 = -1;
+	//public int	 	price2Size = 20;
 	
 	public ArrayList<ItemPrice> priceList;
 	
@@ -23,24 +27,30 @@ public class BeerMenuItem {
 		priceList = new ArrayList<ItemPrice>();
 	}
 	
-	public BeerMenuItem(int id, String beerName, String company, String notes, String style, double abv, int ibu) {
+	public BeerMenuItem(int id, String beerName, String beerNameColor, String company, String notes, 
+			String style, double abv, int ibu, double srm, String beerPourColor) {
 		
 		this.id = 			id;
 		this.beerName = 	beerName;
+		this.beerNameColor =beerNameColor;
 		this.company = 		company;
 		this.notes = 		notes;
 		this.style = 		style;
 		this.abv = 			abv;
 		this.ibu = 			ibu;
+		this.srm =			srm;
+		this.beerPourColor =beerPourColor;		
+		
 		
 		priceList = new ArrayList<ItemPrice>();
 	}
-	
-	public BeerMenuItem(int id, String beerName, String company, String notes, String style, double abv, int ibu, 
+	/*
+	public BeerMenuItem(int id, String beerName, String beerNameColor, String company, String notes, String style, double abv, int ibu, 
 			double price1, int price1Size, double price2, int price2Size) {
 		
 		this.id = 			id;
 		this.beerName = 	beerName;
+		this.beerNameColor =beerNameColor;
 		this.company = 		company;
 		this.notes = 		notes;
 		this.style = 		style;
@@ -53,12 +63,13 @@ public class BeerMenuItem {
 
 		priceList = new ArrayList<ItemPrice>();
 		
-	}
+	}*/
 	
 	public void addPrice(ItemPrice item) {
 		this.priceList.add(item); 
 	}
-	
+
+	/*
 	public void resolvePrices() {
 		if (this.priceList != null && this.priceList.size() > 1) {
 			resolvePrices(priceList.get(0), priceList.get(1));
@@ -87,7 +98,7 @@ public class BeerMenuItem {
 			this.price2 = 		price1;
 			this.price2Size = 	price1Size;
 		}
-	}
+	}*/
 	
 	@Override
 	public String toString() {

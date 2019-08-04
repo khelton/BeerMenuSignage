@@ -54,6 +54,7 @@ public class BeerItemLayoutController {
 		notes.setText(item.notes);
 		beerStyle.setText(item.style);
 		abv.setText("" + item.abv);
+		for 
 		price1.setText((item.price1 == -1) ? "NA" : df.format(item.price1));
 		ounce1.setText("/" + item.price1Size);
 		price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));

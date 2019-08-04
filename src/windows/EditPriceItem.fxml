@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.EditPriceItemController">
+   <children>
+      <HBox prefWidth="200.0">
+         <children>
+            <Label fx:id="rank" prefWidth="45.0" text="1">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <Label prefWidth="45.0" text="Price">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="price" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
+            <Label prefWidth="40.0" text="Size">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="30.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="priceSize" onKeyTyped="#textFieldChanged" prefWidth="100.0" text="16" />
+            <Label prefWidth="90.0" text="Price Type">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="30.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="priceTypeDropdown" prefWidth="200.0" />
+            <CheckBox fx:id="enabled" mnemonicParsing="false" text="Enabled">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </CheckBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</VBox>

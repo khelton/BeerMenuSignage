@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.EditBeerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.EditBeerController">
    <children>
       <HBox prefHeight="50.0" prefWidth="200.0">
          <children>
@@ -15,6 +15,11 @@
                </HBox.margin>
             </Label>
             <TextField fx:id="beerName" onKeyTyped="#textFieldChanged" />
+            <ColorPicker fx:id="beerNameColor" editable="true" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ColorPicker>
             <HBox alignment="TOP_RIGHT">
                <children>
                   <Label prefWidth="70.0" text="Beer Id">
@@ -25,7 +30,7 @@
                   <TextField fx:id="beerId" disable="true" editable="false" prefWidth="50.0" />
                </children>
                <HBox.margin>
-                  <Insets left="100.0" />
+                  <Insets left="180.0" />
                </HBox.margin>
             </HBox>
          </children>
@@ -38,6 +43,16 @@
                </HBox.margin>
             </Label>
             <TextField fx:id="company" onKeyTyped="#textFieldChanged" />
+         </children>
+      </HBox>
+      <HBox prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Label prefWidth="100.0" text="Location">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="location" onKeyTyped="#textFieldChanged" />
          </children>
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
@@ -82,6 +97,25 @@
       </HBox>
       <HBox prefHeight="50.0" prefWidth="200.0">
          <children>
+            <Label prefWidth="100.0" text="Pour Color">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <ColorPicker fx:id="srmColor" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </ColorPicker>
+            <Label text="Pick the color of the pour">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+      <HBox prefHeight="50.0" prefWidth="200.0">
+         <children>
             <Label prefWidth="100.0" text="Price 1">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -112,6 +146,11 @@
             <TextField fx:id="price2Size" onKeyTyped="#textFieldChanged" prefWidth="100.0" text="20" />
          </children>
       </HBox>
+      <Button mnemonicParsing="false" text="Prices...">
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </Button>
       <VBox alignment="TOP_CENTER" prefHeight="250.0" prefWidth="100.0">
          <children>
             <Label text="Preview">
