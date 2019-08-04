@@ -19,13 +19,13 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="price" onKeyTyped="#textFieldChanged" prefWidth="100.0" />
+            <TextField fx:id="price" prefWidth="100.0" />
             <Label prefWidth="40.0" text="Size">
                <HBox.margin>
                   <Insets bottom="5.0" left="30.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="priceSize" onKeyTyped="#textFieldChanged" prefWidth="100.0" text="16" />
+            <TextField fx:id="priceSize" prefWidth="100.0" text="16" />
             <Label prefWidth="90.0" text="Price Type">
                <HBox.margin>
                   <Insets bottom="5.0" left="30.0" right="5.0" top="5.0" />

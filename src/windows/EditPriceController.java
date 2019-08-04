@@ -1,15 +1,20 @@
 package windows;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
+import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
 import types.ItemPriceType;
@@ -20,6 +25,7 @@ public class EditPriceController {
 	public BeerMenuItem beerItem;
 	public ArrayList<ItemPrice> priceList;
 	public ObservableList<ItemPriceType> priceTypeList;
+	private String errorMessage;
 
 	
 	@FXML
@@ -65,6 +71,7 @@ public class EditPriceController {
 				priceLayoutList.add(itemPriceLayout);
 			} catch (IOException e) {
 				System.out.println("Error loading item price layout");
+				e.printStackTrace();
 			}
 		}
 		ObservableList<VBox> oList = FXCollections.observableList(priceLayoutList);
@@ -116,12 +123,60 @@ public class EditPriceController {
 		return price;
 	}
 	
-	//TODO add saving price records
+	//TODO BUG price, size, type, rank, and enabled aren't saving correctly need to set them in price list
 	public boolean savePriceRecords() {
-		return false;
+		errorMessage = "";
+		for (VBox view : pricesListView.getItems()) {
+			EditPriceItemController itemController = (EditPriceItemController) view.getUserData();
+			priceCheck(itemController.price);
+			if (errorMessage.length() > 0) {
+				Alert alert = new Alert(AlertType.ERROR, errorMessage);
+				alert.showAndWait();
+				return false;
+			}
+		}
+		MySqlManager sql = new MySqlManager();
+		try {
+			Connection conn = sql.connect();
+			for (ItemPrice p : priceList) {
+				String sqlQuery = "";
+				if (p.id == 0) {
+					sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id, rank, enabled) VALUES "
+							+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceType.id + "', '" + p.rank + "', '" + p.enabled + "');";
+				} else {
+					sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + ", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
+							+ "WHERE id = " +  p.id + ";";
+				}
+				sql.runInsertQuery(conn, sqlQuery);
+			}
+			conn.close();
+		} catch (Exception e) {
+			Alert alert = new Alert(AlertType.ERROR, 
+					"Error modifying / entering records, please try again");
+			alert.showAndWait();
+			return false;
+		}
+		return true;
 	}
 	
-	
+	public double priceCheck(TextField price) {
+		double retVal = 0;
+		try {
+			retVal = Double.valueOf(price.getText());
+		} catch (Exception e) {
+			errorMessage = "decimal in a price or number in size is not formatted correctly";
+		}
+		return retVal;
+	}
+	public int sizeCheck(TextField size) {
+		int retVal = 0;
+		try {
+			retVal = Integer.valueOf(size.getText());
+		} catch (Exception e) {
+			errorMessage = "decimal in a price or number in size is not formatted correctly";
+		}
+		return retVal;
+	}
 	
 	
 }

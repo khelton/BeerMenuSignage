@@ -105,14 +105,18 @@ public class MainMenuController {
 					+ "FROM price "
 					+ "LEFT JOIN price_type ON price_type.id = price.price_type_id "
 					+ "LEFT JOIN schedule ON schedule.id = price_type.schedule_id "
-					+ "WHERE price.active = 1 ORDER BY beer_id DESC, rank DESC;";
+					+ "WHERE price.active = 1 ORDER BY beer_id DESC, rank DESC, price.id DESC;";
 			sql.runQuery(conn, queryString, (rs) -> {
-				priceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getInt("rank"), rs.getDouble("price"), rs.getInt("size"), 
-						new ItemPriceType(rs.getInt("price_type_id"), rs.getString("price_type_name")), rs.getInt("enabled")));
+				ItemPrice p = new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getInt("rank"), rs.getDouble("price"), rs.getInt("size"), 
+						new ItemPriceType(rs.getInt("price_type_id"), rs.getString("price_type_name")), rs.getInt("enabled"));
+				p.scheduleDays = rs.getString("s_days");
+				p.scheduleTimeStart = rs.getString("s_start");
+				p.scheduleTimeEnd = rs.getString("s_end");
+				priceList.add(p);
 			});
 			
 			queryString  = "SELECT b.id, b.beer_name, b.beer_name_color, b.company, b.notes, b.style, b.abv, b.ibu, "
-					+ "b.srm, b.pour_color "
+					+ "b.srm, b.beer_pour_color "
 					//+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
 					+ "FROM active_beers "
 					+ "LEFT JOIN beer b ON b.id = active_beers.beer_id "
@@ -253,7 +257,10 @@ public class MainMenuController {
 	@FXML
 	private void addBeerButton() {
 		try {
-			launchEditBeerWindow();
+			EditBeerController editBeerController = launchEditBeerWindow();
+			editBeerController.beerItem = new BeerMenuItem();
+			editBeerController.setLayoutFields();
+			editBeerController.updatePreview();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -282,7 +289,7 @@ public class MainMenuController {
 		EditBeerController editBeerController = null;
 		try {
 			FXMLLoader editBeerLoader = new FXMLLoader();
-			editBeerLoader.setLocation(getClass().getResource("EditBeer.fxml"));
+			editBeerLoader.setLocation(getClass().getResource("/windows/EditBeer.fxml"));
 			VBox editBeerWindow = editBeerLoader.load();
 			editBeerController = editBeerLoader.getController();
 			
@@ -363,7 +370,7 @@ public class MainMenuController {
 		//TODO get rid of this method, it shouldn't be needed
 		controller.beerItem = item;
 		item.beerNumber = beerNumber;
-		controller.fillBeerLayout(item, null);
+		controller.fillBeerLayout(item);
 		
 	}
 }

@@ -1,11 +1,13 @@
 package menulayouts;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import types.BeerMenuItem;
+import types.ItemPrice;
 
 
 public class BeerItemLayoutController {
@@ -44,8 +46,7 @@ public class BeerItemLayoutController {
 	
 	
 	
-	public void fillBeerLayout(BeerMenuItem item, GridPane pane) {
-		// TODO get rid of grid pane
+	public void fillBeerLayout(BeerMenuItem item) {
 		DecimalFormat df = new DecimalFormat("0.00");
 		beerItem = item;
 		beerNumber.setText("" + item.beerNumber + ".");
@@ -54,11 +55,25 @@ public class BeerItemLayoutController {
 		notes.setText(item.notes);
 		beerStyle.setText(item.style);
 		abv.setText("" + item.abv);
-		for 
-		price1.setText((item.price1 == -1) ? "NA" : df.format(item.price1));
-		ounce1.setText("/" + item.price1Size);
-		price2.setText((item.price2 == -1) ? "NA" : df.format(item.price2));
-		ounce2.setText("/" + item.price2Size);
+		
+		ArrayList<ItemPrice> validPrices = item.getPrices();
+		System.out.println(item.priceList.size());
+		System.out.println(validPrices.size());
+		if (validPrices.size() > 0) {
+			price1.setText(""+ df.format(validPrices.get(0).price));
+			ounce1.setText("/"+ validPrices.get(0).size);
+		} else {
+			price1.setText("NA");
+			ounce1.setText("/NA");
+		}
+		
+		if (validPrices.size() > 1) {
+			price2.setText(""+ df.format(validPrices.get(1).price));
+			ounce2.setText("/"+ validPrices.get(1).size);
+		} else {
+			price2.setText("NA");
+			ounce2.setText("/NA");
+		}
 		
 	}
 	

@@ -1,23 +1,30 @@
 package windows;
 
 import java.sql.Connection;
-import java.util.ArrayList;
+import java.sql.SQLException;
 
+import com.mysql.cj.exceptions.CJCommunicationsException;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import menulayouts.BeerItemLayoutController;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
-import types.ItemPrice;
+import types.ItemPriceType;
 
 
 public class EditBeerController {
@@ -32,8 +39,8 @@ public class EditBeerController {
 	public ColorPicker beerNameColor;
 	@FXML
 	public TextField company;
-	@FXML
-	public TextField location;
+	//@FXML
+	//public TextField companyLocation;
 	@FXML
 	public TextField notes;
 	@FXML
@@ -42,27 +49,18 @@ public class EditBeerController {
 	public TextField abv;
 	@FXML
 	public TextField ibu;
-	@FXML
-	public TextField srmText;
+	//@FXML
+	//public TextField srmText;
 	@FXML
 	public ColorPicker srmColor;
 	
-	@FXML
-	public Button selectLogoButton;
-	@FXML
-	public Label logoPath;
+	//@FXML
+	//public Button selectLogoButton;
+	//@FXML
+	//public Label logoPath;
 	
 	@FXML
 	public Button pricesButton;
-	
-	@FXML
-	public TextField price1;
-	@FXML
-	public TextField price1Size;
-	@FXML
-	public TextField price2;
-	@FXML
-	public TextField price2Size;
 	
 	@FXML
 	public Button saveButton;
@@ -92,33 +90,121 @@ public class EditBeerController {
 	public void setLayoutFields(BeerMenuItem b) {
 		beerId.setText(""+ b.id);
 		beerName.setText(b.beerName);
+		beerNameColor.setValue(Color.web(b.beerNameColor));
 		company.setText(b.company);
+		//companyLocation.setText(b.location);
 		notes.setText(b.notes);
 		style.setText(b.style);
 		abv.setText(""+ b.abv);
 		ibu.setText(""+ b.ibu);
-		//TODO 
-		for (int i = 0 ; i < b.priceList.size() ; i++ ) {
-			
-		}
-		b.resolvePrices();
-		price1.setText(""+ b.price1);
-		price1Size.setText(""+ b.price1Size);
-		price2.setText(""+ b.price2);
-		price2Size.setText(""+ b.price2Size);
+		srmColor.setValue(Color.web(b.beerPourColor));
+
+		/*
+		ArrayList<ItemPrice> validPrices = b.getPrices();
+		if (validPrices.size() > 0) {
+			price1.setText(""+ validPrices.get(0).price);
+			price1Size.setText(""+ validPrices.get(0).size);
+			if (validPrices.size() > 1) {
+				price2.setText(""+ validPrices.get(1).price);
+				price2Size.setText(""+ validPrices.get(1).size);
+			}
+		}*/
 	}
 	public void updatePreview() {
 		if (beerItem != null && previewItemController != null) {
-			previewItemController.fillBeerLayout(beerItem, previewPane);
+			previewItemController.fillBeerLayout(beerItem);
 		}
 	}
 	
+	@FXML
 	public void saveButtonClicked() {
 		try {
 			saveRecord();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@FXML
+	public void openPricesWindow() {
+		if (beerItem.id == 0) {
+			Alert alert = new Alert(AlertType.ERROR, 
+					"Please save the beer first.\n\n"
+					+ "The beer needs to have a proper id assigned from\n"
+					+ "the database before prices can be saved correctly ");
+			alert.showAndWait();
+			return;
+		}
+		try {
+			EditPriceController editPriceController = launchEditPriceWindow();
+			editPriceController.priceList = beerItem.priceList;
+			editPriceController.beerItem = beerItem;
+			ObservableList<ItemPriceType> priceTypeList = FXCollections.observableArrayList();
+			//TODO put this in its own file. it can be done statically
+			MySqlManager sql = new MySqlManager();
+			Connection conn = null;
+			try {
+				conn = sql.connect();
+				String queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					priceTypeList.add(new ItemPriceType(rs.getInt("id"), rs.getString("name")));
+				});
+				conn.close();
+			} catch (CJCommunicationsException e1) {
+				e1.printStackTrace();
+				System.out.println("not connected, aborting");
+				return;
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+				
+			editPriceController.priceTypeList = priceTypeList;
+			editPriceController.setLayoutFields();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+			
+	}
+	
+	private EditPriceController launchEditPriceWindow() {
+		EditPriceController editPriceController = null;
+		try {
+			FXMLLoader editPriceLoader = new FXMLLoader();
+			editPriceLoader.setLocation(getClass().getResource("/windows/EditPrice.fxml"));
+			VBox editPriceWindow = editPriceLoader.load();
+			editPriceController = editPriceLoader.getController();
+			
+			FXMLLoader beerLoader = new FXMLLoader();
+			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
+			VBox beerLayout = beerLoader.load();
+			BeerItemLayoutController beerItemController = beerLoader.getController();
+			beerLayout.setUserData(beerItemController);
+			
+			editPriceWindow.setUserData(editPriceController);
+			
+			Scene scene = new Scene(editPriceWindow);
+			
+			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			/*
+			stage.setOnCloseRequest( event ->
+		    {
+		    	stage.close();
+		        //refresh all beers list
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    });*/
+
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return editPriceController;
 	}
 	
 	public void saveAndCloseButtonClicked() {
@@ -148,10 +234,12 @@ public class EditBeerController {
 		errorMessage = "";
 		
 		checkBeerName();
-		beerItem = new BeerMenuItem(idCheck(), fixText(beerName), fixText(company),
-				fixText(notes), fixText(style), abvCheck(), ibuCheck(), 
-				priceCheck(price1, 1), sizeCheck(price1Size, 1), 
-				priceCheck(price2, 2), sizeCheck(price2Size, 2));
+		String beerNameColorHex = "#" + Integer.toHexString(beerNameColor.getValue().hashCode());
+		String beerPourColorHex = "#" + Integer.toHexString(srmColor.getValue().hashCode());
+		beerItem = new BeerMenuItem(idCheck(), fixText(beerName), beerNameColorHex, fixText(company),
+				fixText(notes), fixText(style), abvCheck(), ibuCheck(), 0, beerPourColorHex);
+				//priceCheck(price1, 1), sizeCheck(price1Size, 1), 
+				//priceCheck(price2, 2), sizeCheck(price2Size, 2));
 		
 		if (errorMessage.trim().length() > 0) {
 			errorMessage += "\n\nPlease fix these errors and hit save again";
@@ -168,25 +256,16 @@ public class EditBeerController {
 				Connection conn = sql.connect();
 				int beerItemId = 0;
 				String sqlQuery = "INSERT INTO beer "
-						+ "(beer_name, beer_name_color, company, location, notes, style, abv, ibu, srm, beer_color) VALUES "
+						+ "(beer_name, beer_name_color, company, notes, style, abv, ibu, srm, beer_pour_color) VALUES "
 						+ "('" + beerItem.beerName + "', '" + beerItem.beerNameColor + "', '" + beerItem.company + "', '" + beerItem.notes + "',"
-						+ " '" + beerItem.style + "', " + beerItem.abv + ", " + beerItem.ibu + ");";
+						+ " '" + beerItem.style + "', '" + beerItem.abv + "', '" + beerItem.ibu + "', '" + beerItem.srm + "', '" + beerItem.beerPourColor + "');";
 				beerItemId = sql.runInsertQuery(conn, sqlQuery);
 				
-				sqlQuery = "INSERT INTO price "
-						+ "(beer_id, price, size, price_type_id) VALUES ";
-				for (int i = 0 ; i < beerItem.priceList.size() - 1 ; i++ ) {
-					ItemPrice p = beerItem.priceList.get(i);
-					sqlQuery += "(" + beerItemId + ", " + p.price + ", " + p.size + ", " + p.priceTypeId + "), ";
-				}
-				ItemPrice p = beerItem.priceList.get(beerItem.priceList.size() - 1);
-				sqlQuery += "(" + beerItemId + ", " + p.price + ", " + p.size + ", " + p.priceTypeId + ");";
-						
-				sql.runInsertQuery(conn, sqlQuery);
-				
 				beerItem.id = beerItemId;
+				beerId.setText("" + beerItemId);
 				conn.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				Alert alert = new Alert(AlertType.ERROR, 
 						"Error inserting record, please try again");
 				alert.showAndWait();
@@ -198,17 +277,20 @@ public class EditBeerController {
 			
 				//save current beer
 				String sqlQuery = "UPDATE beer SET beer_name = '" + beerItem.beerName + "', "
-						+ "beer_name = '" + beerItem.beerName + "', "
+						+ "beer_name_color = '" + beerItem.beerNameColor + "', "
 						+ "company = '" + beerItem.company + "', "
-						+ "location = '" + beerItem.location + "', "
+						//+ "location = '" + beerItem.location + "', "
 						+ "notes = '" + beerItem.notes + "', "
 						+ "style = '" + beerItem.style + "', "
 						+ "abv = " + beerItem.abv + ", "
-						+ "ibu = " + beerItem.ibu + " WHERE id = " + beerItem.id + ";";
+						+ "ibu = " + beerItem.ibu + ", "
+						+ "srm = " + beerItem.srm + ", "
+						+ "beer_pour_color = " + beerItem.beerPourColor + " WHERE id = " + beerItem.id + ";";
 				sql.runInsertQuery(conn, sqlQuery);
 				
 				//int priceId = 0;
 				//ArrayList<ItemPrice> tempPriceList = new ArrayList<ItemPrice>();
+				/*
 				for (ItemPrice p : beerItem.priceList) {
 					ItemPrice tempPrice = null;
 					sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND price_type_id = " + p.priceTypeId 
@@ -219,14 +301,14 @@ public class EditBeerController {
 					});
 					//priceId = tempPriceList.get(0).id;
 					if (tempPrice != null) {
-						sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + " "
+						sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + ", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
 								+ "WHERE id = " +  p.id + ";";
 					} else {
-						sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id) VALUES "
-								+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceTypeId +"');";
+						sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id, rank, enabled) VALUES "
+								+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceType.id + "', '" + p.rank + "', '" + p.enabled + "');";
 					}
 					sql.runInsertQuery(conn, sqlQuery);
-				}
+				}*/
 				/*
 				tempPriceList.remove(0);
 				
@@ -250,6 +332,7 @@ public class EditBeerController {
 				
 				conn.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				Alert alert = new Alert(AlertType.ERROR, 
 						"Error modifying record, please try again");
 				alert.showAndWait();
@@ -298,6 +381,7 @@ public class EditBeerController {
 	/*
 	 * TODO implement srmCheck
 	 */
+	/*
 	public int srmCheck() {
 		int retVal = 0;
 		try {
@@ -307,7 +391,7 @@ public class EditBeerController {
 			//errorMessage += "\nNot a valid number in IBU field";
 		}
 		return retVal;
-	}
+	}*/
 	public double priceCheck(TextField price, int priceNumber) {
 		double retVal = 0;
 		try {
@@ -387,7 +471,7 @@ public class EditBeerController {
 			if (e.getSource().equals(abv)) {
 				previewItemController.srm.setText(srmText.getText());
 			}*/
-			
+			/*
 			if (e.getSource().equals(price1)) {
 				previewItemController.price1.setText(price1.getText());
 			}
@@ -402,7 +486,7 @@ public class EditBeerController {
 			
 			if (e.getSource().equals(price2Size)) {
 				previewItemController.ounce2.setText("/" + price2Size.getText());
-			}
+			}*/
 		}
 		
 	}

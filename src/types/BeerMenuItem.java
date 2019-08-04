@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public class BeerMenuItem {
 
-	public int 		id;
+	public int 		id = 0;
 	public int 		beerNumber = 0;
 	public String 	beerName = "Name";
 	public String	beerNameColor = "#FFFFFF";
 	public String 	company = "Company";
-	public String 	location = "Company";
+	//public String 	location = "Company";
 	public String 	notes = "Notes";
 	public String 	style = "Style";
 	public double 	abv = 5;
 	public int		ibu = 0;
-	public double	srm = 10;
+	public double	srm = 0;
 	public String	beerPourColor = "#FFDD00";
 	//public double 	price1 = -1;
 	//public int	 	price1Size = 16;
@@ -69,12 +69,19 @@ public class BeerMenuItem {
 		this.priceList.add(item); 
 	}
 
-	/*
-	public void resolvePrices() {
-		if (this.priceList != null && this.priceList.size() > 1) {
-			resolvePrices(priceList.get(0), priceList.get(1));
+	
+	public ArrayList<ItemPrice> getPrices() {
+		ArrayList<ItemPrice> validPrices = new ArrayList<ItemPrice>();
+		
+		for ( int i = 0 ; i < priceList.size() ; i++ ) {
+			if (priceList.get(i).isValid())
+				validPrices.add(priceList.get(i));
 		}
+		
+		return validPrices;
 	}
+	
+	/*
 	public void resolvePrices(ArrayList<ItemPrice> _priceList) {
 		if (_priceList != null && _priceList.size() > 1) {
 			this.priceList = _priceList;
