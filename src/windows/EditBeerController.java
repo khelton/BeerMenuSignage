@@ -167,6 +167,12 @@ public class EditBeerController {
 			
 	}
 	
+	/*
+	 * TODO implement button and view to select/save images/logos
+	private void openImagesWindow()
+		// Open saved images window
+	}*/
+	
 	private EditPriceController launchEditPriceWindow() {
 		EditPriceController editPriceController = null;
 		try {
@@ -379,7 +385,7 @@ public class EditBeerController {
 		return retVal;
 	}
 	/*
-	 * TODO implement srmCheck
+	 * implement srmCheck
 	 */
 	/*
 	public int srmCheck() {
@@ -422,16 +428,18 @@ public class EditBeerController {
 	}
 	
 	@FXML
+	public void beerNameColorChanged() {
+		//System.out.println("Changed beer name color");
+		this.previewItemController.beerName.setTextFill(this.beerNameColor.getValue());
+		this.previewItemController.beerNumber.setTextFill(this.beerNameColor.getValue());
+	}
+	
+	@FXML
 	public void textFieldChanged(KeyEvent e) {
 		if (previewItemController != null) {
 			if (e.getSource().equals(beerName)) {
 				previewItemController.beerName.setText(beerName.getText());
 			}
-			/*
-			 * TODO implement beerNameColor
-			if (e.getSource().equals(beerNameColor)) {
-				previewItemController.beerNameColor.setText(beerNameColor);
-			}*/
 			
 			if (e.getSource().equals(company)) {
 				previewItemController.company.setText(company.getText());
@@ -455,37 +463,16 @@ public class EditBeerController {
 				previewItemController.abv.setText(abv.getText());
 			}
 			/*
-			 * TODO implement srmText
+			 * implement srmText
 			if (e.getSource().equals(srmText)) {
 				previewItemController.srm.setText(srmText.getText());
 			}*/
 			
-			/*
-			 * TODO implement srmColor
-			if (e.getSource().equals(srmColor)) {
-				previewItemController.srmColor.setText(srmColor);
-			}*/
 			
 			/*
-			 * TODO implement button to selec/save logos
+			 * TODO implement button to select/save logos
 			if (e.getSource().equals(abv)) {
 				previewItemController.srm.setText(srmText.getText());
-			}*/
-			/*
-			if (e.getSource().equals(price1)) {
-				previewItemController.price1.setText(price1.getText());
-			}
-			
-			if (e.getSource().equals(price1Size)) {
-				previewItemController.ounce1.setText("/" + price1Size.getText());
-			}
-			
-			if (e.getSource().equals(price2)) {
-				previewItemController.price2.setText(price2.getText());
-			}
-			
-			if (e.getSource().equals(price2Size)) {
-				previewItemController.ounce2.setText("/" + price2Size.getText());
 			}*/
 		}
 		

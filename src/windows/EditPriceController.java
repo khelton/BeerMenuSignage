@@ -94,6 +94,51 @@ public class EditPriceController {
 		}
 	}
 	
+	@FXML
+	public void moveUpButtonClicked() {
+		int selectedIndex = pricesListView.getSelectionModel().getSelectedIndex();
+		if (selectedIndex == 0) {
+			return; // we can't move the price up, its the first one already
+		}
+		ObservableList<VBox> allPriceLayouts = pricesListView.getItems();
+		VBox priceBox1 = allPriceLayouts.get(selectedIndex);
+		VBox priceBox2 = allPriceLayouts.get(selectedIndex - 1);
+		allPriceLayouts.set(selectedIndex - 1, priceBox1);
+		allPriceLayouts.set(selectedIndex, priceBox2);
+	}
+	@FXML
+	public void moveDownButtonClicked() {
+		int selectedIndex = pricesListView.getSelectionModel().getSelectedIndex();
+		int count = pricesListView.getItems().size();
+		if (selectedIndex == count - 1) {
+			return; // we can't move the price down, its the last one already
+		}
+		ObservableList<VBox> allPriceLayouts = pricesListView.getItems();
+		VBox priceBox1 = allPriceLayouts.get(selectedIndex);
+		VBox priceBox2 = allPriceLayouts.get(selectedIndex - 1);
+		allPriceLayouts.set(selectedIndex + 1, priceBox1);
+		allPriceLayouts.set(selectedIndex, priceBox2);
+	}
+	@FXML
+	public void deleteButtonClicked() {
+		if (pricesListView.getSelectionModel().getSelectedItem() == null) {
+			return;
+		}
+		VBox priceBox = pricesListView.getSelectionModel().getSelectedItem();
+		EditPriceItemController itemController = (EditPriceItemController) priceBox.getUserData();
+		if (itemController.itemPrice.id != 0) {
+			// we only have to remove it from the database if it has previously been saved in the db
+			String sqlQuery = "UPDATE price SET active = 0 WHERE id = " +  itemController.itemPrice.id + ";";
+			boolean deleteSuccess = updatePriceRecord(sqlQuery);
+			if (!deleteSuccess) {
+				return; // don't remove the item price because it didn't get removed in the db
+			}
+		}
+		priceList.remove(itemController.itemPrice);
+		pricesListView.getItems().remove(priceBox);
+		
+	}
+	
 	public ItemPrice addNewPrice() {
 		ItemPrice price = null;
 		VBox itemPriceLayout = null;
@@ -123,17 +168,25 @@ public class EditPriceController {
 		return price;
 	}
 	
-	//TODO BUG price, size, type, rank, and enabled aren't saving correctly need to set them in price list
 	public boolean savePriceRecords() {
 		errorMessage = "";
-		for (VBox view : pricesListView.getItems()) {
-			EditPriceItemController itemController = (EditPriceItemController) view.getUserData();
-			priceCheck(itemController.price);
+		ObservableList<VBox> vBoxList =  pricesListView.getItems();
+		priceList.clear();
+		for ( int i = 0 ; i < vBoxList.size() ; i++ ) {
+		//for (VBox view : pricesListView.getItems()) {
+			EditPriceItemController itemController = (EditPriceItemController) vBoxList.get(i).getUserData();
+			itemController.itemPrice.price = priceCheck(itemController.price);
+			itemController.itemPrice.size = sizeCheck(itemController.priceSize);
+			itemController.itemPrice.priceType = itemController.priceTypeDropdown.getValue();
+			itemController.itemPrice.rank = i + 1;
+			itemController.itemPrice.enabled = (itemController.enabled.isSelected()) ? 1 : 0 ;
 			if (errorMessage.length() > 0) {
 				Alert alert = new Alert(AlertType.ERROR, errorMessage);
 				alert.showAndWait();
 				return false;
 			}
+			itemController.rank.setText("" + itemController.itemPrice.rank);
+			priceList.add(itemController.itemPrice);
 		}
 		MySqlManager sql = new MySqlManager();
 		try {
@@ -144,11 +197,26 @@ public class EditPriceController {
 					sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id, rank, enabled) VALUES "
 							+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceType.id + "', '" + p.rank + "', '" + p.enabled + "');";
 				} else {
-					sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + ", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
+					sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + ", price_type_id = " + p.priceType.id +", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
 							+ "WHERE id = " +  p.id + ";";
 				}
 				sql.runInsertQuery(conn, sqlQuery);
 			}
+			conn.close();
+		} catch (Exception e) {
+			Alert alert = new Alert(AlertType.ERROR, 
+					"Error modifying / entering records, please try again");
+			alert.showAndWait();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean updatePriceRecord(String sqlQuery) {
+		MySqlManager sql = new MySqlManager();
+		try {
+			Connection conn = sql.connect();
+			sql.runInsertQuery(conn, sqlQuery);
 			conn.close();
 		} catch (Exception e) {
 			Alert alert = new Alert(AlertType.ERROR, 

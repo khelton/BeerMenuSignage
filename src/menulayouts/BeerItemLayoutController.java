@@ -57,8 +57,8 @@ public class BeerItemLayoutController {
 		abv.setText("" + item.abv);
 		
 		ArrayList<ItemPrice> validPrices = item.getPrices();
-		System.out.println(item.priceList.size());
-		System.out.println(validPrices.size());
+		//System.out.println(item.priceList.size());
+		//System.out.println(validPrices.size());
 		if (validPrices.size() > 0) {
 			price1.setText(""+ df.format(validPrices.get(0).price));
 			ounce1.setText("/"+ validPrices.get(0).size);

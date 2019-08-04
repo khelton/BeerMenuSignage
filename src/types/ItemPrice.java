@@ -33,9 +33,10 @@ public class ItemPrice {
 	}
 	
 	public boolean isValid() {
+		boolean isEnabled = (enabled == 1);
 		boolean dayValid = checkDay();
 		boolean timeValid = checkTime();
-		if (dayValid && timeValid) {
+		if (isEnabled && dayValid && timeValid) {
 			return true;
 		}
 		return false;
@@ -63,7 +64,7 @@ public class ItemPrice {
 			LocalTime end = LocalTime.parse( scheduleTimeEnd );
 
 			LocalTime now = LocalTime.now();
-			System.out.println(start.getHour() + " " + end.getHour() + " " + now.getHour());
+			//System.out.println(start.getHour() + " " + end.getHour() + " " + now.getHour());
 			if (now.isAfter(start) && now.isBefore(end)) {
 		        //checkes whether the current time is between 14:49:00 and 20:11:13.
 		        return true;

@@ -354,7 +354,10 @@ public class MainMenuController {
 					beerLayout = beerLoader.load();
 					BeerItemLayoutController controller = beerLoader.getController();
 					beerLayout.setUserData(controller);
-					fillBeerLayout(beerLayout, controller, item, i);
+					//fillBeerLayout(beerLayout, controller, item, i);
+					controller.beerItem = item;
+					item.beerNumber = i;
+					controller.fillBeerLayout(item);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -365,12 +368,4 @@ public class MainMenuController {
 		}
 	}
 	
-	
-	public void fillBeerLayout(VBox beerLayout, BeerItemLayoutController controller, BeerMenuItem item, int beerNumber) {
-		//TODO get rid of this method, it shouldn't be needed
-		controller.beerItem = item;
-		item.beerNumber = beerNumber;
-		controller.fillBeerLayout(item);
-		
-	}
 }

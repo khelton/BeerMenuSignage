@@ -15,7 +15,7 @@
                </HBox.margin>
             </Label>
             <TextField fx:id="beerName" onKeyTyped="#textFieldChanged" />
-            <ColorPicker fx:id="beerNameColor" editable="true" prefWidth="150.0">
+            <ColorPicker fx:id="beerNameColor" editable="true" onAction="#beerNameColorChanged" prefWidth="150.0">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
@@ -92,7 +92,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </Label>
-            <ColorPicker fx:id="srmColor" prefWidth="150.0">
+            <ColorPicker fx:id="srmColor" editable="true" prefWidth="150.0">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
