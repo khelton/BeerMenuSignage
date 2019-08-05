@@ -1,4 +1,4 @@
-package windows;
+package item.price;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +10,7 @@ import types.ItemPrice;
 import types.ItemPriceType;
 
 
-public class EditPriceItemController {
+public class PriceItemListViewLayoutController {
 	
 	public ItemPrice itemPrice;
 	public ObservableList<ItemPriceType> priceTypeList;
@@ -30,7 +30,7 @@ public class EditPriceItemController {
 	
 	
 	//Required constructor that is empty
-	public EditPriceItemController() {}
+	public PriceItemListViewLayoutController() {}
 	
 	@FXML
 	public void initialize() {

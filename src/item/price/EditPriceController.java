@@ -1,4 +1,4 @@
-package windows;
+package item.price;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -63,9 +63,9 @@ public class EditPriceController {
 			VBox itemPriceLayout = null;
 			try {
 				FXMLLoader itemPriceLoader = new FXMLLoader();
-				itemPriceLoader.setLocation(getClass().getResource("/windows/EditPriceItem.fxml"));
+				itemPriceLoader.setLocation(getClass().getResource("/item/price/PriceItemListViewLayout.fxml"));
 				itemPriceLayout = itemPriceLoader.load();
-				EditPriceItemController controller = itemPriceLoader.getController();
+				PriceItemListViewLayoutController controller = itemPriceLoader.getController();
 				itemPriceLayout.setUserData(controller);
 				controller.setLayoutFields(priceList.get(i), priceTypeList);
 				priceLayoutList.add(itemPriceLayout);
@@ -125,7 +125,7 @@ public class EditPriceController {
 			return;
 		}
 		VBox priceBox = pricesListView.getSelectionModel().getSelectedItem();
-		EditPriceItemController itemController = (EditPriceItemController) priceBox.getUserData();
+		PriceItemListViewLayoutController itemController = (PriceItemListViewLayoutController) priceBox.getUserData();
 		if (itemController.itemPrice.id != 0) {
 			// we only have to remove it from the database if it has previously been saved in the db
 			String sqlQuery = "UPDATE price SET active = 0 WHERE id = " +  itemController.itemPrice.id + ";";
@@ -156,7 +156,7 @@ public class EditPriceController {
 			FXMLLoader itemPriceLoader = new FXMLLoader();
 			itemPriceLoader.setLocation(getClass().getResource("/windows/EditPriceItem.fxml"));
 			itemPriceLayout = itemPriceLoader.load();
-			EditPriceItemController controller = itemPriceLoader.getController();
+			PriceItemListViewLayoutController controller = itemPriceLoader.getController();
 			itemPriceLayout.setUserData(controller);
 			price = new ItemPrice(0, beerItem.id, priceList.size(), 0.00, 16, type, 1);
 			priceList.add(price);
@@ -174,7 +174,7 @@ public class EditPriceController {
 		priceList.clear();
 		for ( int i = 0 ; i < vBoxList.size() ; i++ ) {
 		//for (VBox view : pricesListView.getItems()) {
-			EditPriceItemController itemController = (EditPriceItemController) vBoxList.get(i).getUserData();
+			PriceItemListViewLayoutController itemController = (PriceItemListViewLayoutController) vBoxList.get(i).getUserData();
 			itemController.itemPrice.price = priceCheck(itemController.price);
 			itemController.itemPrice.size = sizeCheck(itemController.priceSize);
 			itemController.itemPrice.priceType = itemController.priceTypeDropdown.getValue();

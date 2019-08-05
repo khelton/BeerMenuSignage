@@ -1,10 +1,11 @@
-package windows;
+package item.edit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
 
+import item.price.EditPriceController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,7 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import menulayouts.BeerItemLayoutController;
+import menulayouts.grid4x5.Item4X5Controller;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPriceType;
@@ -70,7 +71,7 @@ public class EditBeerController {
 	@FXML
 	public GridPane previewPane;
 	
-	public BeerItemLayoutController previewItemController;
+	public Item4X5Controller previewItemController;
 	
 	private String errorMessage;
 	
@@ -112,7 +113,7 @@ public class EditBeerController {
 	}
 	public void updatePreview() {
 		if (beerItem != null && previewItemController != null) {
-			previewItemController.fillBeerLayout(beerItem);
+			previewItemController.setLayout(beerItem);
 		}
 	}
 	
@@ -177,16 +178,17 @@ public class EditBeerController {
 		EditPriceController editPriceController = null;
 		try {
 			FXMLLoader editPriceLoader = new FXMLLoader();
-			editPriceLoader.setLocation(getClass().getResource("/windows/EditPrice.fxml"));
+			editPriceLoader.setLocation(getClass().getResource("/item/price/EditPrice.fxml"));
 			VBox editPriceWindow = editPriceLoader.load();
 			editPriceController = editPriceLoader.getController();
 			
+			/*
 			FXMLLoader beerLoader = new FXMLLoader();
 			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
 			VBox beerLayout = beerLoader.load();
 			BeerItemLayoutController beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
-			
+			*/
 			editPriceWindow.setUserData(editPriceController);
 			
 			Scene scene = new Scene(editPriceWindow);
@@ -468,12 +470,6 @@ public class EditBeerController {
 				previewItemController.srm.setText(srmText.getText());
 			}*/
 			
-			
-			/*
-			 * TODO implement button to select/save logos
-			if (e.getSource().equals(abv)) {
-				previewItemController.srm.setText(srmText.getText());
-			}*/
 		}
 		
 	}

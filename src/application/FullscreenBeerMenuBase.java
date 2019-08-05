@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import types.TimedScene;
 
-public class FullscreenBeerMenuBase implements FullscreenMenuBase {
+public class FullscreenBeerMenuBase implements IFullscreenMenuBase {
 
 	ArrayList<TimedScene> timedScenes;
 	
@@ -14,6 +14,18 @@ public class FullscreenBeerMenuBase implements FullscreenMenuBase {
 	
 	
 	public void updateScene() {
+		
+	}
+
+
+	@Override
+	public void loadScene() {
+		
+	}
+
+
+	@Override
+	public void setLayoutFields() {
 		
 	}
 }

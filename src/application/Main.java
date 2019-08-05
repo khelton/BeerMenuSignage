@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import menulayouts.BeerItemLayoutController;
+import mainmenu.MainMenuController;
+import menulayouts.grid4x5.Item4X5Controller;
 import types.BeerMenuItem;
-import windows.MainMenuController;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +15,7 @@ import javafx.fxml.FXMLLoader;
 public class Main extends Application {
 	
 	//public int beerNumber;
-	public ArrayList<BeerItemLayoutController> beerControllerList;
+	public ArrayList<Item4X5Controller> beerControllerList;
 	public ArrayList<VBox> beerLayoutList;
 	public ArrayList<BeerMenuItem> beerItemList;
 	
@@ -27,13 +27,13 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		//this.beerNumber = 1;
-		beerControllerList = new ArrayList<BeerItemLayoutController>();
+		beerControllerList = new ArrayList<Item4X5Controller>();
 		beerLayoutList = new ArrayList<VBox>();
 		beerItemList = new ArrayList<BeerMenuItem>();
 		try {
 			VBox rootLayout = null;
 			FXMLLoader rootLoader = new FXMLLoader();
-			rootLoader.setLocation(getClass().getResource("/windows/MainMenu.fxml"));
+			rootLoader.setLocation(getClass().getResource("/mainmenu/MainMenu.fxml"));
 			rootLayout = rootLoader.load();
 			MainMenuController controller = rootLoader.getController();
 			Scene scene = new Scene(rootLayout);

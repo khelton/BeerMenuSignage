@@ -1,16 +1,17 @@
-package menulayouts;
+package menulayouts.grid4x5;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import menulayouts.IDisplayMenuItem;
 import types.BeerMenuItem;
+import types.IMenuItem;
 import types.ItemPrice;
 
 
-public class BeerItemLayoutController {
+public class Item4X5Controller implements IDisplayMenuItem {
 	
 	@FXML
 	public Label beerNumber;
@@ -38,25 +39,28 @@ public class BeerItemLayoutController {
 	
 	
 	//Required constructor that is empty
-	public BeerItemLayoutController() {}
+	public Item4X5Controller() {}
 	
 	@FXML
 	public void initialize() {
+		
 	}
 	
 	
 	
-	public void fillBeerLayout(BeerMenuItem item) {
-		DecimalFormat df = new DecimalFormat("0.00");
-		beerItem = item;
-		beerNumber.setText("" + item.beerNumber + ".");
-		beerName.setText(item.beerName);
-		company.setText(item.company);
-		notes.setText(item.notes);
-		beerStyle.setText(item.style);
-		abv.setText("" + item.abv);
+	public void setLayout(IMenuItem item) {
+		BeerMenuItem bItem = (BeerMenuItem)item;
 		
-		ArrayList<ItemPrice> validPrices = item.getPrices();
+		DecimalFormat df = new DecimalFormat("0.00");
+		beerItem = bItem;
+		beerNumber.setText("" + bItem.beerNumber + ".");
+		beerName.setText(bItem.beerName);
+		company.setText(bItem.company);
+		notes.setText(bItem.notes);
+		beerStyle.setText(bItem.style);
+		abv.setText("" + bItem.abv);
+		
+		ArrayList<ItemPrice> validPrices = bItem.getPrices();
 		//System.out.println(item.priceList.size());
 		//System.out.println(validPrices.size());
 		if (validPrices.size() > 0) {
@@ -76,5 +80,6 @@ public class BeerItemLayoutController {
 		}
 		
 	}
+
 	
 }

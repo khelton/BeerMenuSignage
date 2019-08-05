@@ -2,7 +2,7 @@ package types;
 
 import java.util.ArrayList;
 
-public class BeerMenuItem {
+public class BeerMenuItem implements IMenuItem {
 
 	public int 		id = 0;
 	public int 		beerNumber = 0;

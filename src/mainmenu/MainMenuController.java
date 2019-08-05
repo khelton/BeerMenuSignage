@@ -1,4 +1,4 @@
-package windows;
+package mainmenu;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
+
+import item.edit.EditBeerController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,7 +21,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import menulayouts.BeerItemLayoutController;
+import menulayouts.grid4x5.Item4X5Controller;
+import menulayouts.grid4x5.Menu4X5Controller;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
@@ -237,9 +240,14 @@ public class MainMenuController {
 	@FXML
 	private void launchFullScreenMenu() {
 		try {
-			GridPane grid = (GridPane)FXMLLoader.load(getClass().getResource("Menu_Grid4X5.fxml"));
-			fillGridPane(grid);
-			Scene scene2 = new Scene(grid);
+			if (activeBeersListView == null)
+				return;
+			FXMLLoader menuLoader = new FXMLLoader();
+			menuLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Menu.fxml"));
+			GridPane menuLayout = menuLoader.load();
+			Menu4X5Controller menuController = menuLoader.getController();
+			menuController.setLayout(activeBeersListView.getItems());
+			Scene scene2 = new Scene(menuLayout);
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			Stage stage2 = new Stage();
 			stage2.setScene(scene2);
@@ -285,18 +293,31 @@ public class MainMenuController {
 		
 	}
 	
+
+	/* TODO implement button and view to select/save pricetypes
+	@FXML
+	private void editPriceTypesButton()
+		// Open saved images window
+	}*/
+	
+	/* TODO implement button and view to select/save schedules
+	@FXML
+	private void editSchedulesButton()
+		// Open saved images window
+	}*/
+	
 	private EditBeerController launchEditBeerWindow() {
 		EditBeerController editBeerController = null;
 		try {
 			FXMLLoader editBeerLoader = new FXMLLoader();
-			editBeerLoader.setLocation(getClass().getResource("/windows/EditBeer.fxml"));
+			editBeerLoader.setLocation(getClass().getResource("/item/edit/EditBeer.fxml"));
 			VBox editBeerWindow = editBeerLoader.load();
 			editBeerController = editBeerLoader.getController();
 			
 			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
+			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
 			VBox beerLayout = beerLoader.load();
-			BeerItemLayoutController beerItemController = beerLoader.getController();
+			Item4X5Controller beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
 			
 			editBeerController.previewPane.add(beerLayout, 0, 0);
@@ -329,7 +350,7 @@ public class MainMenuController {
 	
 	
 	
-	
+	/*
 	public void fillGridPane(GridPane grid) {
 		if (this.activeBeersListView == null)
 			return;
@@ -350,14 +371,14 @@ public class MainMenuController {
 				VBox beerLayout = null;
 				try {
 					FXMLLoader beerLoader = new FXMLLoader();
-					beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
+					beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
 					beerLayout = beerLoader.load();
-					BeerItemLayoutController controller = beerLoader.getController();
+					Item4X5Controller controller = beerLoader.getController();
 					beerLayout.setUserData(controller);
 					//fillBeerLayout(beerLayout, controller, item, i);
 					controller.beerItem = item;
 					item.beerNumber = i;
-					controller.fillBeerLayout(item);
+					controller.setLayout(item);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -366,6 +387,6 @@ public class MainMenuController {
 					grid.add(beerLayout, x, y);
 			}
 		}
-	}
+	}*/
 	
 }
