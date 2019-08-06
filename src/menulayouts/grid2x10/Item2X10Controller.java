@@ -1,4 +1,4 @@
-package menulayouts.grid4x5;
+package menulayouts.grid2x10;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,7 +18,7 @@ import types.IMenuItem;
 import types.ItemPrice;
 
 
-public class Item4X5Controller implements IDisplayMenuItem {
+public class Item2X10Controller implements IDisplayMenuItem {
 	
 	@FXML
 	public Label beerNumber;
@@ -48,7 +48,7 @@ public class Item4X5Controller implements IDisplayMenuItem {
 	
 	
 	//Required constructor that is empty
-	public Item4X5Controller() {}
+	public Item2X10Controller() {}
 	
 	@FXML
 	public void initialize() {

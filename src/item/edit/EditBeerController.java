@@ -5,6 +5,9 @@ import java.sql.SQLException;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
 
+import image.EditImageController;
+import image.ImageSourceType;
+import image.ImageType;
 import item.price.EditPriceController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,6 +65,9 @@ public class EditBeerController {
 	
 	@FXML
 	public Button pricesButton;
+	
+	@FXML
+	public Button imageButton;
 	
 	@FXML
 	public Button saveButton;
@@ -168,6 +174,8 @@ public class EditBeerController {
 			
 	}
 	
+	
+	
 	/*
 	 * TODO implement button and view to select/save images/logos
 	private void openImagesWindow()
@@ -213,6 +221,87 @@ public class EditBeerController {
 			e.printStackTrace();
 		}
 		return editPriceController;
+	}
+	
+	@FXML
+	public void openImageWindow() {
+		if (beerItem.id == 0) {
+			Alert alert = new Alert(AlertType.ERROR, 
+					"Please save the beer first.\n\n"
+					+ "The beer needs to have a proper id assigned from\n"
+					+ "the database before images can be saved correctly ");
+			alert.showAndWait();
+			return;
+		}
+		try {
+			EditImageController editImageController = launchEditImageWindow();
+			editImageController.imageList = beerItem.imageList;
+			editImageController.beerItem = beerItem;
+			ObservableList<ImageType> imageTypeList = FXCollections.observableArrayList();
+			ObservableList<ImageSourceType> imageSourceTypeList = FXCollections.observableArrayList();
+			//TODO put this in its own file. it can be done statically
+			MySqlManager sql = new MySqlManager();
+			Connection conn = null;
+			try {
+				conn = sql.connect();
+				String queryString  = "SELECT * FROM image_type WHERE active = 1 ORDER BY id DESC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					imageTypeList.add(new ImageType(rs.getInt("id"), rs.getString("name")));
+				});
+				queryString  = "SELECT * FROM image_source_type WHERE active = 1 ORDER BY id DESC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					imageSourceTypeList.add(new ImageSourceType(rs.getInt("id"), rs.getString("name")));
+				});
+				conn.close();
+			} catch (CJCommunicationsException e1) {
+				e1.printStackTrace();
+				System.out.println("not connected, aborting");
+				return;
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+				
+			editImageController.imageTypeList = imageTypeList;
+			editImageController.imageSourceTypeList = imageSourceTypeList;
+			editImageController.setLayoutFields();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+			
+	}
+	
+	private EditImageController launchEditImageWindow() {
+		EditImageController editImageController = null;
+		try {
+			FXMLLoader editImageLoader = new FXMLLoader();
+			editImageLoader.setLocation(getClass().getResource("/image/EditImage.fxml"));
+			VBox editImageWindow = editImageLoader.load();
+			editImageController = editImageLoader.getController();
+			
+			editImageWindow.setUserData(editImageController);
+			
+			Scene scene = new Scene(editImageWindow);
+			
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			/*
+			stage.setOnCloseRequest( event ->
+		    {
+		    	stage.close();
+		        //refresh all beers list
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    });*/
+
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return editImageController;
 	}
 	
 	public void saveAndCloseButtonClicked() {
@@ -290,10 +379,10 @@ public class EditBeerController {
 						//+ "location = '" + beerItem.location + "', "
 						+ "notes = '" + beerItem.notes + "', "
 						+ "style = '" + beerItem.style + "', "
-						+ "abv = " + beerItem.abv + ", "
-						+ "ibu = " + beerItem.ibu + ", "
-						+ "srm = " + beerItem.srm + ", "
-						+ "beer_pour_color = " + beerItem.beerPourColor + " WHERE id = " + beerItem.id + ";";
+						+ "abv = '" + beerItem.abv + "', "
+						+ "ibu = '" + beerItem.ibu + "', "
+						+ "srm = '" + beerItem.srm + "', "
+						+ "beer_pour_color = '" + beerItem.beerPourColor + "' WHERE id = " + beerItem.id + ";";
 				sql.runInsertQuery(conn, sqlQuery);
 				
 				//int priceId = 0;

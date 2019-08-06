@@ -21,6 +21,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import menulayouts.grid2x10.Menu2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
 import menulayouts.grid4x5.Menu4X5Controller;
 import mysql.MySqlManager;
@@ -243,9 +244,9 @@ public class MainMenuController {
 			if (activeBeersListView == null)
 				return;
 			FXMLLoader menuLoader = new FXMLLoader();
-			menuLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Menu.fxml"));
+			menuLoader.setLocation(getClass().getResource("/menulayouts/grid2x10/Menu.fxml"));
 			GridPane menuLayout = menuLoader.load();
-			Menu4X5Controller menuController = menuLoader.getController();
+			Menu2X10Controller menuController = menuLoader.getController();
 			menuController.setLayout(activeBeersListView.getItems());
 			Scene scene2 = new Scene(menuLayout);
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -315,7 +316,7 @@ public class MainMenuController {
 			editBeerController = editBeerLoader.getController();
 			
 			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
+			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5image/Item.fxml"));
 			VBox beerLayout = beerLoader.load();
 			Item4X5Controller beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
@@ -348,45 +349,6 @@ public class MainMenuController {
 		return editBeerController;
 	}
 	
-	
-	
-	/*
-	public void fillGridPane(GridPane grid) {
-		if (this.activeBeersListView == null)
-			return;
-		ObservableList<BeerMenuItem> activeBeerList = this.activeBeersListView.getItems();
-		int gridRows = grid.getRowConstraints().size();
-		int gridCols = grid.getColumnConstraints().size();
-		int i = 1;
-		for (int y = 0 ; y  < gridRows; y++) {
-			for (int x = 0 ; x  < gridCols; x++) {
-				BeerMenuItem item = null;
-				if (activeBeerList.size() < i) {
-					item = new BeerMenuItem();
-				} else if (activeBeerList.get(i-1) == null) {
-					item = new BeerMenuItem();
-				} else {
-					item = activeBeerList.get(i-1);
-				}
-				VBox beerLayout = null;
-				try {
-					FXMLLoader beerLoader = new FXMLLoader();
-					beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
-					beerLayout = beerLoader.load();
-					Item4X5Controller controller = beerLoader.getController();
-					beerLayout.setUserData(controller);
-					//fillBeerLayout(beerLayout, controller, item, i);
-					controller.beerItem = item;
-					item.beerNumber = i;
-					controller.setLayout(item);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				i++;
-				if (beerLayout != null)
-					grid.add(beerLayout, x, y);
-			}
-		}
-	}*/
+
 	
 }

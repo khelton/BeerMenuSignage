@@ -52,6 +52,7 @@ VALUES ('24/7', '00:00:00', '24:00:00'), ('Happy Hour 1', '16:00:00', '21:00:00'
 CREATE TABLE `churchill`.`image_type` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL,
+  `active` INT(10) UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -62,11 +63,28 @@ VALUES ('Beer Logo'), ('Cigar Logo'), ('Beer Closeup'), ('Cigar Closeup'),
 ('Featured Screen'), ('Specials Screen');
 
 
+# Create Image Source Type Table
+CREATE TABLE `churchill`.`image_source_type` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL,
+  `active` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+# Insert image types
+INSERT INTO `churchill`.`image_source_type` (`name`)
+VALUES ('Local'), ('Web');
+
+
 # Create Image Table
 CREATE TABLE `churchill`.`image` (
-  `id` INT(10) NOT NULL,
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
   `beer_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  `image_src` TEXT NOT NULL,
   `image_type_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
-  `name` VARCHAR(45) NOT NULL,
-  `location` TEXT NOT NULL,
+  `image_source_type_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+  `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+  `enabled` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+  `active` INT(10) UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`));
