@@ -206,11 +206,11 @@ public class EditImageController {
 				String sqlQuery = "";
 				if (p.id == 0) {
 					sqlQuery = "INSERT INTO image (beer_id, image_src, image_type_id, image_source_type_id, rank, enabled) VALUES "
-							+ "('" + beerItem.id + "', '" + p.imageSrc + "', '" + p.imageType.id + "', '" 
+							+ "('" + beerItem.id + "', '" + p.imageSrc.replace("\\", "\\\\") + "', '" + p.imageType.id + "', '" 
 							+ p.imageSourceType.id + "', '" + p.rank + "', '" + p.enabled + "');";
 				} else {
-					sqlQuery = "UPDATE image SET beer_id = " + beerItem.id + ", image_src = " + p.imageSrc + ", image_type_id = " 
-							+ p.imageType.id + ", image_source_type_id = " + p.imageSourceType.id+ ", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
+					sqlQuery = "UPDATE image SET beer_id = '" + beerItem.id + "', image_src = '" + p.imageSrc.replace("\\", "\\\\") + "', image_type_id = '" 
+							+ p.imageType.id + "', image_source_type_id = '" + p.imageSourceType.id+ "', `rank` = '" + p.rank + "', enabled = '" + p.enabled + "' "
 							+ "WHERE id = " +  p.id + ";";
 				}
 				sql.runInsertQuery(conn, sqlQuery);

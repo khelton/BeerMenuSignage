@@ -23,6 +23,7 @@ public class BeerMenuItem implements IMenuItem {
 	
 	public BeerMenuItem() {
 		priceList = new ArrayList<ItemPrice>();
+		imageList = new ArrayList<ItemImage>();
 	}
 	
 	public BeerMenuItem(int id, String beerName, String beerNameColor, String company, String notes, 
@@ -46,6 +47,11 @@ public class BeerMenuItem implements IMenuItem {
 	
 	public void addPrice(ItemPrice item) {
 		this.priceList.add(item); 
+	}
+	
+	public void addImage(ItemImage item) {
+		this.imageList.add(item); 
+		
 	}
 
 	

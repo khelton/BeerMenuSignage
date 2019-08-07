@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 import com.mysql.cj.exceptions.CJCommunicationsException;
 
+import image.ImageSourceType;
+import image.ImageType;
+import image.ItemImage;
 import item.edit.EditBeerController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -88,6 +91,7 @@ public class MainMenuController {
 		ObservableList<BeerMenuItem> activeBeerList = FXCollections.observableArrayList();
 		ArrayList<ItemPrice> priceList = new ArrayList<ItemPrice>();
 		ArrayList<ItemPriceType> priceTypeList = new ArrayList<ItemPriceType>();
+		ArrayList<ItemImage> imageList = new ArrayList<ItemImage>();
 		
 		try {
 			conn = sql.connect();
@@ -119,6 +123,20 @@ public class MainMenuController {
 				priceList.add(p);
 			});
 			
+			queryString  = "SELECT image.*, it.name as 'it_name', "
+					+ "ist.name as 'ist_name' "
+					+ "FROM image "
+					+ "LEFT JOIN image_type it ON it.id = image.image_type_id "
+					+ "LEFT JOIN image_source_type ist ON ist.id = image.image_source_type_id "
+					+ "WHERE image.active = 1 ORDER BY beer_id DESC, rank DESC, image.id DESC;";
+			sql.runQuery(conn, queryString, (rs) -> {
+				ImageType it = new ImageType(rs.getInt("image_type_id"), rs.getString("it_name"));
+				ImageSourceType ist = new ImageSourceType(rs.getInt("image_source_type_id"), rs.getString("ist_name"));
+				ItemImage im = new ItemImage(rs.getInt("id"), rs.getInt("beer_id"), rs.getInt("rank"), rs.getString("image_src"), 
+						it, ist, rs.getInt("enabled"));
+				imageList.add(im);
+			});
+			
 			queryString  = "SELECT b.id, b.beer_name, b.beer_name_color, b.company, b.notes, b.style, b.abv, b.ibu, "
 					+ "b.srm, b.beer_pour_color "
 					//+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
@@ -145,7 +163,10 @@ public class MainMenuController {
 		}
 		
 		@SuppressWarnings("unchecked")
-		ArrayList<ItemPrice> activeBeersPriceList =   (ArrayList<ItemPrice>) priceList.clone();
+		ArrayList<ItemPrice> activeBeersPriceList = (ArrayList<ItemPrice>) priceList.clone();
+		@SuppressWarnings("unchecked")
+		ArrayList<ItemImage> activeBeersImageList = (ArrayList<ItemImage>) imageList.clone();
+		
 		if (beerList != null && beerList.size() > 0) {
 			for(BeerMenuItem b : beerList) {
 				for (int i = priceList.size() - 1; i >= 0; i--) {
@@ -154,21 +175,14 @@ public class MainMenuController {
 						priceList.remove(i);
 					}
 				}
-			}
-			allBeersListView.setItems(beerList);
-			/*
-			for(BeerMenuItem b : beerList) {
-				//b.resolvePrices();
-			}
-			allBeersListView.setItems(beerList);
-			for(BeerMenuItem b : beerList) {
-				for (int i = priceList.size() - 1; i >= 0; i--) {
-					if (priceList.get(i).beerId == b.id) {
-						b.addPrice(priceList.get(i));
-						priceList.remove(i);
+				for (int i = imageList.size() - 1; i >= 0; i--) {
+					if (imageList.get(i).beerId == b.id) {
+						b.addImage(imageList.get(i));
+						imageList.remove(i);
 					}
 				}
-			}*/
+			}
+			allBeersListView.setItems(beerList);
 		}
 		
 		if (activeBeerList != null && activeBeerList.size() > 0) {
@@ -177,6 +191,12 @@ public class MainMenuController {
 					if (activeBeersPriceList.get(i).beerId == b.id) {
 						b.addPrice(activeBeersPriceList.get(i));
 						activeBeersPriceList.remove(i);
+					}
+				}
+				for (int i = activeBeersImageList.size() - 1; i >= 0; i--) {
+					if (activeBeersImageList.get(i).beerId == b.id) {
+						b.addImage(activeBeersImageList.get(i));
+						activeBeersImageList.remove(i);
 					}
 				}
 			}
@@ -316,7 +336,7 @@ public class MainMenuController {
 			editBeerController = editBeerLoader.getController();
 			
 			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5image/Item.fxml"));
+			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
 			VBox beerLayout = beerLoader.load();
 			Item4X5Controller beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
