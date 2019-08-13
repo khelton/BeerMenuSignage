@@ -12,6 +12,7 @@ public class BeerMenuItem implements IMenuItem {
 	public String	beerNameColor = "#FFFFFF";
 	public String 	company = "Company";
 	public String 	notes = "Notes";
+	public String 	notesColor = "#FF5959";
 	public String 	style = "Style";
 	public double 	abv = 5;
 	public int		ibu = 0;

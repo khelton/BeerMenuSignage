@@ -49,7 +49,7 @@
                               </HBox>
                               <HBox>
                                  <children>
-                                    <Label id="company" fx:id="company" text="Company" textFill="WHITE" wrapText="true">
+                                    <Label id="company" fx:id="company" text="Company" textFill="WHITE">
                                        <font>
                                           <Font name="Megan June" size="30.0" />
                                        </font>
@@ -62,7 +62,7 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
                                     </Separator>
-                                    <Label id="notes" fx:id="notes" text="Notes" textFill="#ff5959" wrapText="true">
+                                    <Label id="notes" fx:id="notes" text="Notes" textFill="#ff5959">
                                        <font>
                                           <Font name="Megan June" size="30.0" />
                                        </font>

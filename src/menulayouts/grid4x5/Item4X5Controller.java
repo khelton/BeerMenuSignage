@@ -58,9 +58,12 @@ public class Item4X5Controller implements IDisplayMenuItem {
 	
 	
 	public void setLayout(IMenuItem item) {
+		if (item == null) {
+			return;
+		}
+		
 		BeerMenuItem bItem = (BeerMenuItem)item;
 		
-		DecimalFormat df = new DecimalFormat("0.00");
 		beerItem = bItem;
 		beerNumber.setText("" + bItem.beerNumber + ".");
 		beerName.setText(bItem.beerName);
@@ -70,6 +73,25 @@ public class Item4X5Controller implements IDisplayMenuItem {
 		notes.setText(bItem.notes);
 		beerStyle.setText(bItem.style);
 		abv.setText("" + bItem.abv);
+		
+		setPrices(bItem);
+		/*
+		Thread t = new Thread(() -> {
+			File file = new File("karl_mosaic.jpg");
+			Image image = new Image(file.toURI().toString());
+			logo.setImage(image);
+		});
+		t.start();*/
+		
+	}
+	
+	public void setPrices(IMenuItem item) {
+		if (item == null) {
+			return;
+		}
+		
+		BeerMenuItem bItem = (BeerMenuItem)item;
+		DecimalFormat df = new DecimalFormat("0.00");
 		
 		ArrayList<ItemPrice> validPrices = bItem.getPrices();
 		//System.out.println(item.priceList.size());
@@ -89,13 +111,6 @@ public class Item4X5Controller implements IDisplayMenuItem {
 			price2.setText("NA");
 			ounce2.setText("/NA");
 		}
-		Thread t = new Thread(() -> {
-			File file = new File("karl_mosaic.jpg");
-			Image image = new Image(file.toURI().toString());
-			logo.setImage(image);
-		});
-		t.start();
-		
 	}
 
 	

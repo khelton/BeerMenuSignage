@@ -8,5 +8,7 @@ public interface IDisplayMenuItem {
 	void initialize();
 	
 	void setLayout(IMenuItem item);
+	
+	void setPrices(IMenuItem item);
 		
 }

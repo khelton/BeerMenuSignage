@@ -24,6 +24,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import menulayouts.grid2x10.Item2X10Controller;
 import menulayouts.grid2x10.Menu2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
 import menulayouts.grid4x5.Menu4X5Controller;
@@ -97,10 +98,12 @@ public class MainMenuController {
 			conn = sql.connect();
 			String queryString  = "SELECT * FROM beer ORDER BY company ASC, beer_name ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
-				beerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
+				BeerMenuItem b = new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
 						rs.getString("beer_name_color"), rs.getString("company"), rs.getString("notes"), 
 						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), rs.getDouble("srm"), 
-						rs.getString("beer_pour_color")));
+						rs.getString("beer_pour_color"));
+				b.notesColor = rs.getString("notes_color");
+				beerList.add(b);
 			});
 			
 			queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
@@ -138,19 +141,18 @@ public class MainMenuController {
 			});
 			
 			queryString  = "SELECT b.id, b.beer_name, b.beer_name_color, b.company, b.notes, b.style, b.abv, b.ibu, "
-					+ "b.srm, b.beer_pour_color "
-					//+ "p1.price AS price1, p1.size AS size1, p2.price AS price2, p2.size AS size2 "
+					+ "b.srm, b.beer_pour_color, b.notes_color "
 					+ "FROM active_beers "
 					+ "LEFT JOIN beer b ON b.id = active_beers.beer_id "
-					//+ "LEFT JOIN price p1 ON p1.id = active_beers.price_1_id "
-					//+ "LEFT JOIN price p2 ON p2.id = active_beers.price_2_id "
 					+ "WHERE 1 "
 					+ "ORDER BY active_beers.id ASC;";
 			sql.runQuery(conn, queryString, (rs) -> {
-				activeBeerList.add(new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
+				BeerMenuItem b = new BeerMenuItem(rs.getInt("id"), rs.getString("beer_name"), 
 						rs.getString("beer_name_color"), rs.getString("company"), rs.getString("notes"), 
 						rs.getString("style"), rs.getDouble("abv"), rs.getInt("ibu"), rs.getDouble("srm"), 
-						rs.getString("beer_pour_color")));
+						rs.getString("beer_pour_color"));
+				b.notesColor = rs.getString("notes_color");
+				activeBeerList.add(b);
 			});
 		
 			conn.close();
@@ -236,13 +238,17 @@ public class MainMenuController {
 		try {
 			MySqlManager sql = new MySqlManager();
 			Connection conn = sql.connect();
-			int priceId1, priceId2;
-			if (newBeer.priceList.get(0).size < newBeer.priceList.get(1).size) {
-				priceId1 = newBeer.priceList.get(0).id;
-				priceId2 = newBeer.priceList.get(1).id;
-			} else {
-				priceId1 = newBeer.priceList.get(1).id;
-				priceId2 = newBeer.priceList.get(0).id;
+			int priceId1 = 0;
+			int priceId2 = 0;
+			// This needs to be taken out, prices don't work like they used to
+			if (newBeer.priceList != null && newBeer.priceList.size() > 1) {
+				if (newBeer.priceList.get(0).size < newBeer.priceList.get(1).size) {
+					priceId1 = 0;
+					priceId2 = 0;
+				} else {
+					priceId1 = 0;
+					priceId2 = 0;
+				}
 			}
 			//save current beer
 			String sqlQuery = "UPDATE active_beers SET beer_id = " + newBeer.id + ", "
@@ -272,7 +278,19 @@ public class MainMenuController {
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			Stage stage2 = new Stage();
 			stage2.setScene(scene2);
+			stage2.setTitle("Fullscreen Menu");
 			stage2.setFullScreen(true);
+			stage2.setOnCloseRequest( event ->
+		    {
+		    	menuController.stopPriceIntervalTimer();
+		    	stage2.close();
+		        //refresh all beers list
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    });
 			
 			stage2.show();
 		} catch(Exception e) {
@@ -336,9 +354,9 @@ public class MainMenuController {
 			editBeerController = editBeerLoader.getController();
 			
 			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/grid4x5/Item.fxml"));
+			beerLoader.setLocation(getClass().getResource("/menulayouts/grid2x10/Item.fxml"));
 			VBox beerLayout = beerLoader.load();
-			Item4X5Controller beerItemController = beerLoader.getController();
+			Item2X10Controller beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
 			
 			editBeerController.previewPane.add(beerLayout, 0, 0);
@@ -351,6 +369,7 @@ public class MainMenuController {
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			Stage stage = new Stage();
 			stage.setScene(scene);
+			stage.setTitle("Edit Beer");
 			stage.setOnCloseRequest( event ->
 		    {
 		    	stage.close();

@@ -1,11 +1,8 @@
 package menulayouts.grid2x10;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import image.ItemImage;
 import javafx.fxml.FXML;
@@ -62,9 +59,12 @@ public class Item2X10Controller implements IDisplayMenuItem {
 	
 	
 	public void setLayout(IMenuItem item) {
+		if (item == null) {
+			return;
+		}
+		
 		BeerMenuItem bItem = (BeerMenuItem)item;
 		
-		DecimalFormat df = new DecimalFormat("0.00");
 		beerItem = bItem;
 		beerNumber.setText("" + bItem.beerNumber + ".");
 		beerName.setText(bItem.beerName);
@@ -72,12 +72,25 @@ public class Item2X10Controller implements IDisplayMenuItem {
 		beerName.setTextFill(Color.web(bItem.beerNameColor));
 		company.setText(bItem.company);
 		notes.setText(bItem.notes);
+		notes.setTextFill(Color.web(bItem.notesColor));
 		beerStyle.setText(bItem.style);
 		abv.setText("" + bItem.abv);
 		
+		setPrices(bItem);
+
+		setImage(bItem);
+		
+	}
+	
+	public void setPrices(IMenuItem item) {
+		if (item == null) {
+			return;
+		}
+		
+		BeerMenuItem bItem = (BeerMenuItem)item;
+		
 		ArrayList<ItemPrice> validPrices = bItem.getPrices();
-		//System.out.println(item.priceList.size());
-		//System.out.println(validPrices.size());
+		DecimalFormat df = new DecimalFormat("0.00");
 		if (validPrices.size() > 0) {
 			price1.setText(""+ df.format(validPrices.get(0).price));
 			ounce1.setText(""+ validPrices.get(0).size);
@@ -93,6 +106,15 @@ public class Item2X10Controller implements IDisplayMenuItem {
 			price2.setText("NA");
 			ounce2.setText("NA");
 		}
+	}
+	
+	public void setImage(IMenuItem item) {
+		if (item == null) {
+			return;
+		}
+		
+		BeerMenuItem bItem = (BeerMenuItem)item;
+		
 		ItemImage tempImage = null;
 		if (bItem.imageList != null) {
 			if (bItem.imageList.size() > 0) {
@@ -107,20 +129,22 @@ public class Item2X10Controller implements IDisplayMenuItem {
 				if (tempImage != null ) {
 					final ItemImage logoImage = tempImage;
 					Thread t = new Thread(() -> {
+						double iwidth = logoWrapper.getPrefWidth();
+						double iheight = logoWrapper.getPrefHeight();
 						File file = new File(logoImage.imageSrc);
-						Image image = new Image(file.toURI().toString());
+						Image image = new Image(file.toURI().toString(), iwidth, iheight, true, false, true);
 						logo.setPreserveRatio(true);
 						logo.setImage(image);
-						logo.maxWidth(98);
-						logo.prefWidth(98);
-						logo.minWidth(98);
-						logoWrapper.maxWidth(98);
-						logoWrapper.prefWidth(98);
-						logoWrapper.minWidth(98);
+						logo.maxWidth(iwidth);
+						logo.prefWidth(iwidth);
+						logo.minWidth(iwidth);
+						logoWrapper.maxWidth(iwidth);
+						logoWrapper.prefWidth(iwidth);
+						logoWrapper.minWidth(iwidth);
 					});
 					t.start();
 				}
-			} else {
+			} /*else {
 				File file = new File("/home/pi/BeerMenu/images/karl_mosaic.jpeg");
 				Image image = new Image(file.toURI().toString());
 				logo.setPreserveRatio(true);
@@ -131,22 +155,8 @@ public class Item2X10Controller implements IDisplayMenuItem {
 				logoWrapper.maxWidth(98);
 				logoWrapper.prefWidth(98);
 				logoWrapper.minWidth(98);
-				/*
-				logo.setFitWidth(0);
-				logo.setFitHeight(0);
-				logo.setScaleX(0);
-				logo.maxWidth(0);
-				logo.prefWidth(0);
-				logo.minWidth(0);
-				logoWrapper.setScaleX(0);
-				logoWrapper.maxWidth(0);
-				logoWrapper.prefWidth(0);
-				logoWrapper.minWidth(0);
-				System.out.println("Imagetype " + logo.getFitWidth() + " " + logoWrapper.getWidth());
-				*/
-			}
+			}*/
 		} 
-		
 	}
 
 	

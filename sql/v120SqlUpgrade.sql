@@ -11,7 +11,8 @@ ADD COLUMN `enabled` TINYINT(1) NULL DEFAULT '1' AFTER `rank`;
 ALTER TABLE `churchill`.`beer` 
 ADD COLUMN `srm` DECIMAL(10,1) NULL DEFAULT '0.0' AFTER `ibu`,
 ADD COLUMN `beer_name_color` VARCHAR(9) NOT NULL DEFAULT '#FFFFFF' AFTER `date_modified`,
-ADD COLUMN `beer_pour_color` VARCHAR(9) NOT NULL DEFAULT '#FFDD00' AFTER `beer_name_color`;
+ADD COLUMN `beer_pour_color` VARCHAR(9) NOT NULL DEFAULT '#FFDD00' AFTER `beer_name_color`,
+ADD COLUMN `notes_color` VARCHAR(9) NOT NULL DEFAULT '#FF5959' AFTER `beer_pour_color`;
 
 
 # Create price_type table

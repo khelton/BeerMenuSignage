@@ -1,15 +1,24 @@
 package menulayouts.grid2x10;
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.temporal.TemporalField;
+import java.util.Calendar;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import types.BeerMenuItem;
 
 
@@ -17,6 +26,9 @@ public class Menu2X10Controller {
 	
 	@FXML
 	public GridPane layoutGrid;
+	
+	Timeline checkPriceInterval = null;
+	LocalTime lastCheckedTime = null;
 	
 	//Required constructor that is empty
 	public Menu2X10Controller() {}
@@ -72,6 +84,35 @@ public class Menu2X10Controller {
 					layoutGrid.add(beerLayout, x, y);
 			}
 		}
+		lastCheckedTime = LocalTime.now();
+		checkPriceInterval = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+
+		    @Override
+		    public void handle(ActionEvent event) {
+		    	LocalTime now = LocalTime.now();
+		    	if(now.getMinute() != lastCheckedTime.getMinute()) {
+		    		System.out.println("Updating Prices");
+		    		updatePrices();
+		    		lastCheckedTime = now;
+		    	}
+		    }
+		}));
+		checkPriceInterval.setCycleCount(Timeline.INDEFINITE);
+		checkPriceInterval.play();
 	}
 	
+	public void updatePrices() {
+		ObservableList<Node> gridChildren = layoutGrid.getChildren();
+		for (Node n : gridChildren) {
+			Item2X10Controller c = (Item2X10Controller)n.getUserData();
+			c.setPrices(c.beerItem);
+		}
+	}
+	
+	public void stopPriceIntervalTimer() {
+		if (checkPriceInterval != null) {
+			checkPriceInterval.stop();
+			checkPriceInterval = null;
+		}
+	}
 }

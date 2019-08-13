@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import menulayouts.grid2x10.Item2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
@@ -47,6 +48,8 @@ public class EditBeerController {
 	//public TextField companyLocation;
 	@FXML
 	public TextField notes;
+	@FXML
+	public ColorPicker notesColor;
 	@FXML
 	public TextField style;
 	@FXML
@@ -77,7 +80,7 @@ public class EditBeerController {
 	@FXML
 	public GridPane previewPane;
 	
-	public Item4X5Controller previewItemController;
+	public Item2X10Controller previewItemController;
 	
 	private String errorMessage;
 	
@@ -101,6 +104,7 @@ public class EditBeerController {
 		company.setText(b.company);
 		//companyLocation.setText(b.location);
 		notes.setText(b.notes);
+		notesColor.setValue(Color.web(b.notesColor));
 		style.setText(b.style);
 		abv.setText(""+ b.abv);
 		ibu.setText(""+ b.ibu);
@@ -134,7 +138,7 @@ public class EditBeerController {
 	
 	@FXML
 	public void openPricesWindow() {
-		if (beerItem.id == 0) {
+		if (beerItem == null || beerItem.id == 0) {
 			Alert alert = new Alert(AlertType.ERROR, 
 					"Please save the beer first.\n\n"
 					+ "The beer needs to have a proper id assigned from\n"
@@ -175,28 +179,14 @@ public class EditBeerController {
 	}
 	
 	
-	
-	/*
-	 * TODO implement button and view to select/save images/logos
-	private void openImagesWindow()
-		// Open saved images window
-	}*/
-	
 	private EditPriceController launchEditPriceWindow() {
-		EditPriceController editPriceController = null;
+		EditPriceController returnPriceController = null;
 		try {
 			FXMLLoader editPriceLoader = new FXMLLoader();
 			editPriceLoader.setLocation(getClass().getResource("/item/price/EditPrice.fxml"));
 			VBox editPriceWindow = editPriceLoader.load();
-			editPriceController = editPriceLoader.getController();
+			EditPriceController editPriceController = editPriceLoader.getController();
 			
-			/*
-			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/BeerItemLayout.fxml"));
-			VBox beerLayout = beerLoader.load();
-			BeerItemLayoutController beerItemController = beerLoader.getController();
-			beerLayout.setUserData(beerItemController);
-			*/
 			editPriceWindow.setUserData(editPriceController);
 			
 			Scene scene = new Scene(editPriceWindow);
@@ -204,28 +194,31 @@ public class EditBeerController {
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			Stage stage = new Stage();
 			stage.setScene(scene);
-			/*
+			stage.setTitle("Edit Prices");
+			
 			stage.setOnCloseRequest( event ->
 		    {
+		    	beerItem.priceList = editPriceController.priceList;
+		    	//beerItem.priceList = ((EditPriceController)stage.getScene().getUserData()).priceList;
 		    	stage.close();
-		        //refresh all beers list
+		        //refresh prices
 		    	try {
-		    		refreshConnection();
+		    		previewItemController.setPrices(beerItem);
 		    	} catch (Exception e) {
 		    		e.printStackTrace();
 		    	}
-		    });*/
-
+		    });
+			returnPriceController = editPriceController;
 			stage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		return editPriceController;
+		return returnPriceController;
 	}
 	
 	@FXML
 	public void openImageWindow() {
-		if (beerItem.id == 0) {
+		if (beerItem == null || beerItem.id == 0) {
 			Alert alert = new Alert(AlertType.ERROR, 
 					"Please save the beer first.\n\n"
 					+ "The beer needs to have a proper id assigned from\n"
@@ -285,17 +278,18 @@ public class EditBeerController {
 			
 			Stage stage = new Stage();
 			stage.setScene(scene);
-			/*
+			stage.setTitle("Edit Images");
+			
 			stage.setOnCloseRequest( event ->
 		    {
 		    	stage.close();
 		        //refresh all beers list
 		    	try {
-		    		refreshConnection();
+		    		previewItemController.setImage(beerItem);
 		    	} catch (Exception e) {
 		    		e.printStackTrace();
 		    	}
-		    });*/
+		    });
 
 			stage.show();
 		} catch(Exception e) {
@@ -333,8 +327,10 @@ public class EditBeerController {
 		checkBeerName();
 		String beerNameColorHex = "#" + Integer.toHexString(beerNameColor.getValue().hashCode());
 		String beerPourColorHex = "#" + Integer.toHexString(srmColor.getValue().hashCode());
+		String beerNotesColorHex = "#" + Integer.toHexString(notesColor.getValue().hashCode());
 		beerItem = new BeerMenuItem(idCheck(), fixText(beerName), beerNameColorHex, fixText(company),
 				fixText(notes), fixText(style), abvCheck(), ibuCheck(), 0, beerPourColorHex);
+		beerItem.notesColor = beerNotesColorHex;
 				//priceCheck(price1, 1), sizeCheck(price1Size, 1), 
 				//priceCheck(price2, 2), sizeCheck(price2Size, 2));
 		
@@ -353,9 +349,10 @@ public class EditBeerController {
 				Connection conn = sql.connect();
 				int beerItemId = 0;
 				String sqlQuery = "INSERT INTO beer "
-						+ "(beer_name, beer_name_color, company, notes, style, abv, ibu, srm, beer_pour_color) VALUES "
+						+ "(beer_name, beer_name_color, company, notes, style, abv, ibu, srm, beer_pour_color, notes_color) VALUES "
 						+ "('" + beerItem.beerName + "', '" + beerItem.beerNameColor + "', '" + beerItem.company + "', '" + beerItem.notes + "',"
-						+ " '" + beerItem.style + "', '" + beerItem.abv + "', '" + beerItem.ibu + "', '" + beerItem.srm + "', '" + beerItem.beerPourColor + "');";
+						+ " '" + beerItem.style + "', '" + beerItem.abv + "', '" + beerItem.ibu + "', '" + beerItem.srm 
+						+ "', '" + beerItem.beerPourColor + "', '" + beerItem.notesColor + "');";
 				beerItemId = sql.runInsertQuery(conn, sqlQuery);
 				
 				beerItem.id = beerItemId;
@@ -378,6 +375,7 @@ public class EditBeerController {
 						+ "company = '" + beerItem.company + "', "
 						//+ "location = '" + beerItem.location + "', "
 						+ "notes = '" + beerItem.notes + "', "
+						+ "notes_color = '" + beerItem.notesColor + "', "
 						+ "style = '" + beerItem.style + "', "
 						+ "abv = '" + beerItem.abv + "', "
 						+ "ibu = '" + beerItem.ibu + "', "
@@ -523,6 +521,12 @@ public class EditBeerController {
 		//System.out.println("Changed beer name color");
 		this.previewItemController.beerName.setTextFill(this.beerNameColor.getValue());
 		this.previewItemController.beerNumber.setTextFill(this.beerNameColor.getValue());
+	}
+	
+	@FXML
+	public void notesColorChanged() {
+		//System.out.println("Changed beer name color");
+		this.previewItemController.notes.setTextFill(this.notesColor.getValue());
 	}
 	
 	@FXML

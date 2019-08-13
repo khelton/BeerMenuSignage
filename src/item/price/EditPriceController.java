@@ -154,7 +154,7 @@ public class EditPriceController {
 		}
 		try {
 			FXMLLoader itemPriceLoader = new FXMLLoader();
-			itemPriceLoader.setLocation(getClass().getResource("/windows/EditPriceItem.fxml"));
+			itemPriceLoader.setLocation(getClass().getResource("/item/price/PriceItemListViewLayout.fxml"));
 			itemPriceLayout = itemPriceLoader.load();
 			PriceItemListViewLayoutController controller = itemPriceLoader.getController();
 			itemPriceLayout.setUserData(controller);
