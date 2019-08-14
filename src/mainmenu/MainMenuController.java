@@ -11,6 +11,8 @@ import image.ImageSourceType;
 import image.ImageType;
 import image.ItemImage;
 import item.edit.EditBeerController;
+import item.price.EditPriceTypeController;
+import item.price.PriceTypeListViewController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,6 +34,7 @@ import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
 import types.ItemPriceType;
+import types.PriceSchedule;
 
 
 public class MainMenuController {
@@ -91,7 +94,7 @@ public class MainMenuController {
 		ObservableList<BeerMenuItem> beerList = FXCollections.observableArrayList();
 		ObservableList<BeerMenuItem> activeBeerList = FXCollections.observableArrayList();
 		ArrayList<ItemPrice> priceList = new ArrayList<ItemPrice>();
-		ArrayList<ItemPriceType> priceTypeList = new ArrayList<ItemPriceType>();
+		//ArrayList<ItemPriceType> priceTypeList = new ArrayList<ItemPriceType>();
 		ArrayList<ItemImage> imageList = new ArrayList<ItemImage>();
 		
 		try {
@@ -105,24 +108,34 @@ public class MainMenuController {
 				b.notesColor = rs.getString("notes_color");
 				beerList.add(b);
 			});
-			
-			queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
-			sql.runQuery(conn, queryString, (rs) -> {
-				priceTypeList.add(new ItemPriceType(rs.getInt("id"), rs.getString("name")));
-			});
-
-			queryString  = "SELECT price.*, price_type.name as 'price_type_name', "
-					+ "`schedule`.time_start as s_start, `schedule`.time_end as s_end, `schedule`.days_string as s_days "
-					+ "FROM price "
-					+ "LEFT JOIN price_type ON price_type.id = price.price_type_id "
+			/*
+			queryString  = "SELECT price_type.*, "
+					+ "`schedule`.name as s_name, `schedule`.days_string as s_days "
+					+ "`schedule`.time_start as s_start, `schedule`.time_end as s_end "
+					+ "FROM price_type "
 					+ "LEFT JOIN schedule ON schedule.id = price_type.schedule_id "
+					+ "WHERE active = 1 ORDER BY id DESC;";
+			sql.runQuery(conn, queryString, (rs) -> {
+				PriceSchedule s  = new PriceSchedule(rs.getInt("schedule_id"), rs.getString("s_name"), 
+						rs.getString("s_start"), rs.getString("s_end"), rs.getString("s_days"));
+				ItemPriceType pt = new ItemPriceType(rs.getInt("id"), rs.getString("name"), s, rs.getInt("enabled"));
+				priceTypeList.add(pt);
+			});*/
+
+			queryString  = "SELECT price.*, pt.id as 'pt_id', pt.name as 'pt_name', pt.enabled as 'pt_enabled', "
+					+ "s.id as 's_id', s.name as 's_name', s.days_string as 's_days', "
+					+ "s.time_start as 's_start', s.time_end as 's_end' "
+					+ "FROM price "
+					+ "LEFT JOIN price_type pt ON pt.id = price.price_type_id "
+					+ "LEFT JOIN schedule s ON s.id = pt.schedule_id "
 					+ "WHERE price.active = 1 ORDER BY beer_id DESC, rank DESC, price.id DESC;";
 			sql.runQuery(conn, queryString, (rs) -> {
+				PriceSchedule s  = new PriceSchedule(rs.getInt("s_id"), rs.getString("s_name"), 
+						rs.getString("s_start"), rs.getString("s_end"), rs.getString("s_days"));
+				ItemPriceType pt = new ItemPriceType(rs.getInt("pt_id"), rs.getString("pt_name"),
+						s, rs.getInt("pt_enabled"));
 				ItemPrice p = new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getInt("rank"), rs.getDouble("price"), rs.getInt("size"), 
-						new ItemPriceType(rs.getInt("price_type_id"), rs.getString("price_type_name")), rs.getInt("enabled"));
-				p.scheduleDays = rs.getString("s_days");
-				p.scheduleTimeStart = rs.getString("s_start");
-				p.scheduleTimeEnd = rs.getString("s_end");
+						pt, rs.getInt("enabled"));
 				priceList.add(p);
 			});
 			
@@ -298,7 +311,51 @@ public class MainMenuController {
 		}
 		
 	}
-	
+	@FXML
+	private void editPriceTypesButton() {
+		try {
+			EditPriceTypeController controller = launchEditPriceTypeWindow();
+			//editBeerController.beerItem = new BeerMenuItem();
+			ArrayList<ItemPriceType> priceTypeList = new ArrayList<ItemPriceType>();
+			ObservableList<PriceSchedule> scheduleList = FXCollections.observableArrayList();
+			MySqlManager sql = new MySqlManager();
+			Connection conn = null;
+			try {
+				conn = sql.connect();
+				String queryString  = "SELECT price_type.*, "
+						+ "s.name as 's_name', s.days_string as 's_days', "
+						+ "s.time_start as 's_start', s.time_end as 's_end' "
+						+ "FROM price_type "
+						+ "LEFT JOIN schedule s ON s.id = price_type.schedule_id "
+						+ "WHERE price_type.active = 1 ORDER BY id DESC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					PriceSchedule s  = new PriceSchedule(rs.getInt("schedule_id"), rs.getString("s_name"), 
+							rs.getString("s_start"), rs.getString("s_end"), rs.getString("s_days"));
+					ItemPriceType pt = new ItemPriceType(rs.getInt("id"), rs.getString("name"), s, rs.getInt("enabled"));
+					priceTypeList.add(pt);
+				});
+				queryString  = "SELECT * FROM schedule WHERE active = 1 ORDER BY name ASC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					PriceSchedule s  = new PriceSchedule(rs.getInt("id"), rs.getString("name"), 
+							rs.getString("time_start"), rs.getString("time_end"), rs.getString("days_string"));
+					scheduleList.add(s);
+				});
+				conn.close();
+			} catch (CJCommunicationsException e1) {
+				e1.printStackTrace();
+				System.out.println("not connected, aborting");
+				return;
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			controller.priceTypeList = priceTypeList;
+			controller.scheduleList = scheduleList;
+			controller.setLayoutFields();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 	@FXML
@@ -386,6 +443,40 @@ public class MainMenuController {
 			e.printStackTrace();
 		}
 		return editBeerController;
+	}
+	
+	private EditPriceTypeController launchEditPriceTypeWindow() {
+		EditPriceTypeController controller = null;
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("/item/price/EditPriceType.fxml"));
+			VBox vBox = loader.load();
+			controller = loader.getController();
+			
+			vBox.setUserData(controller);
+			
+			Scene scene = new Scene(vBox);
+			
+			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.setTitle("Edit Price Types");
+			stage.setOnCloseRequest( event ->
+		    {
+		    	stage.close();
+		        //refresh all beers list
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    });
+
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return controller;
 	}
 	
 

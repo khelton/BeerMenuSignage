@@ -20,6 +20,7 @@ CREATE TABLE `churchill`.`price_type` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` TINYTEXT CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL,
   `schedule_id` INT(10) UNSIGNED NOT NULL DEFAULT '1',
+  `enabled` INT(10) UNSIGNED NOT NULL DEFAULT '1',
   `active` INT(10) UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB

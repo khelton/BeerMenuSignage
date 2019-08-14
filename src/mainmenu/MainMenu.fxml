@@ -122,6 +122,11 @@
       </VBox>
       <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0">
          <children>
+            <Button mnemonicParsing="false" onMouseClicked="#editPriceTypesButton" text="Edit Price Types" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets right="100.0" />
+               </HBox.margin>
+            </Button>
             <Button mnemonicParsing="false" onMouseClicked="#addBeerButton" prefWidth="100.0" text="Add Beer" textAlignment="CENTER">
                <HBox.margin>
                   <Insets right="25.0" />

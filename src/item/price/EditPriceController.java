@@ -101,10 +101,12 @@ public class EditPriceController {
 			return; // we can't move the price up, its the first one already
 		}
 		ObservableList<VBox> allPriceLayouts = pricesListView.getItems();
-		VBox priceBox1 = allPriceLayouts.get(selectedIndex);
+		VBox priceBoxSelected = allPriceLayouts.get(selectedIndex);
 		VBox priceBox2 = allPriceLayouts.get(selectedIndex - 1);
-		allPriceLayouts.set(selectedIndex - 1, priceBox1);
+		allPriceLayouts.set(selectedIndex - 1, priceBoxSelected);
 		allPriceLayouts.set(selectedIndex, priceBox2);
+		
+		pricesListView.getSelectionModel().select(priceBoxSelected);
 	}
 	@FXML
 	public void moveDownButtonClicked() {
@@ -114,10 +116,12 @@ public class EditPriceController {
 			return; // we can't move the price down, its the last one already
 		}
 		ObservableList<VBox> allPriceLayouts = pricesListView.getItems();
-		VBox priceBox1 = allPriceLayouts.get(selectedIndex);
+		VBox priceBoxSelected = allPriceLayouts.get(selectedIndex);
 		VBox priceBox2 = allPriceLayouts.get(selectedIndex - 1);
-		allPriceLayouts.set(selectedIndex + 1, priceBox1);
+		allPriceLayouts.set(selectedIndex + 1, priceBoxSelected);
 		allPriceLayouts.set(selectedIndex, priceBox2);
+		
+		pricesListView.getSelectionModel().select(priceBoxSelected);
 	}
 	@FXML
 	public void deleteButtonClicked() {

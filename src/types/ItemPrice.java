@@ -13,9 +13,9 @@ public class ItemPrice {
 	public double price;
 	public int size;
 	public ItemPriceType priceType;
-	public String scheduleTimeStart;
-	public String scheduleTimeEnd;
-	public String scheduleDays;
+	//public String scheduleTimeStart;
+	//public String scheduleTimeEnd;
+	//public String scheduleDays;
 	public int enabled;
 	//public int priceTypeId;
 	//public String priceTypeString;
@@ -34,61 +34,12 @@ public class ItemPrice {
 	
 	public boolean isValid() {
 		boolean isEnabled = (enabled == 1);
-		boolean dayValid = checkDay();
-		boolean timeValid = checkTime();
-		if (isEnabled && dayValid && timeValid) {
+		boolean typeEnabled = (priceType.enabled == 1);
+		boolean dayValid = priceType.schedule.checkDay();
+		boolean timeValid = priceType.schedule.checkTime();
+		//System.out.println("" + isEnabled + " " + typeEnabled + " " + dayValid + " " + timeValid );
+		if (isEnabled && typeEnabled && dayValid && timeValid) {
 			return true;
-		}
-		return false;
-	}
-	
-	public boolean checkDay() {
-		if (scheduleDays == null || scheduleDays.length() != 7) {
-			return false;
-		}
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
-		char dayValue = scheduleDays.charAt(day);
-		if (dayValue == '1') {
-			return true;
-		}
-		return false;	
-	}
-	
-	public boolean checkTime() {
-		if (scheduleTimeStart == null || scheduleTimeEnd == null 
-				|| scheduleTimeStart.length() == 0 || scheduleTimeEnd.length() == 0 ) {
-			return false;
-		}
-		try {
-			LocalTime start = LocalTime.parse( scheduleTimeStart );
-			LocalTime end = LocalTime.parse( scheduleTimeEnd );
-
-			LocalTime now = LocalTime.now();
-			//System.out.println(start.getHour() + " " + end.getHour() + " " + now.getHour());
-			if (now.isAfter(start) && now.isBefore(end)) {
-		        //checkes whether the current time is between 14:49:00 and 20:11:13.
-		        return true;
-		    }
-			/*
-			LocalTime target = LocalTime.parse( "01:00:00" );
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		    Date time1 = sdf.parse(scheduleTimeStart);
-		    Calendar calendar1 = Calendar.getInstance();
-		    calendar1.setTime(time1);
-	
-		    Date time2 = sdf.parse(scheduleTimeEnd);
-		    Calendar calendar2 = Calendar.getInstance();
-		    calendar2.setTime(time2);
-		    //calendar2.add(Calendar.DATE, 1);
-	
-		    Calendar calendar3 = Calendar.getInstance();
-		    Date now = calendar3.getTime();
-		    if (now.after(calendar1.getTime()) && now.before(calendar2.getTime())) {
-		        //checkes whether the current time is between 14:49:00 and 20:11:13.
-		        return true;
-		    }*/
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return false;
 	}

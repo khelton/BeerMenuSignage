@@ -30,6 +30,7 @@ import menulayouts.grid4x5.Item4X5Controller;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPriceType;
+import types.PriceSchedule;
 
 
 public class EditBeerController {
@@ -156,9 +157,21 @@ public class EditBeerController {
 			Connection conn = null;
 			try {
 				conn = sql.connect();
-				String queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
+				/*String queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
 				sql.runQuery(conn, queryString, (rs) -> {
 					priceTypeList.add(new ItemPriceType(rs.getInt("id"), rs.getString("name")));
+				});*/
+				String queryString  = "SELECT price_type.*, "
+						+ "s.name as 's_name', s.days_string as 's_days', "
+						+ "s.time_start as 's_start', s.time_end as 's_end' "
+						+ "FROM price_type "
+						+ "LEFT JOIN schedule s ON s.id = price_type.schedule_id "
+						+ "WHERE price_type.active = 1 ORDER BY id DESC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					PriceSchedule s  = new PriceSchedule(rs.getInt("schedule_id"), rs.getString("s_name"), 
+							rs.getString("s_start"), rs.getString("s_end"), rs.getString("s_days"));
+					ItemPriceType pt = new ItemPriceType(rs.getInt("id"), rs.getString("name"), s, rs.getInt("enabled"));
+					priceTypeList.add(pt);
 				});
 				conn.close();
 			} catch (CJCommunicationsException e1) {
