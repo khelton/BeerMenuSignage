@@ -9,7 +9,7 @@ public class PriceSchedule {
 	public String name;
 	public LocalTime startTime = null;
 	public LocalTime endTime = null;
-	private String daysEnabledString = null;
+	public String daysEnabledString = null;
 	
 	
 	public PriceSchedule(int id, String name, String startTime, String endTime, String daysEnabledString) {

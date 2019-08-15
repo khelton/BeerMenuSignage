@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="item.price.PriceScheduleListViewController">
+   <children>
+      <HBox prefWidth="200.0">
+         <children>
+            <Label prefWidth="70.0" text="Name">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="name" prefWidth="100.0" />
+            <Label prefWidth="90.0" text="Start Time">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="50.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="startTime" prefWidth="130.0" promptText="HH:mm:ss" text="00:00:00" />
+            <Label prefWidth="90.0" text="End Time">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="50.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="endTime" prefWidth="130.0" promptText="HH:mm:ss" text="23:59:59" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox prefWidth="200.0">
+         <children>
+            <CheckBox fx:id="sun" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Sun">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="mon" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Mon">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="tue" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Tue">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="wed" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Wed">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="thu" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Thu">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="fri" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Fri">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="sat" mnemonicParsing="false" prefWidth="75.0" selected="true" text="Sat">
+               <HBox.margin>
+                  <Insets left="10.0" right="20.0" />
+               </HBox.margin>
+            </CheckBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</VBox>

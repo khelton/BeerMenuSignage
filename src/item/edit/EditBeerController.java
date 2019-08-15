@@ -166,7 +166,7 @@ public class EditBeerController {
 						+ "s.time_start as 's_start', s.time_end as 's_end' "
 						+ "FROM price_type "
 						+ "LEFT JOIN schedule s ON s.id = price_type.schedule_id "
-						+ "WHERE price_type.active = 1 ORDER BY id DESC;";
+						+ "WHERE price_type.active = 1 ORDER BY name ASC;";
 				sql.runQuery(conn, queryString, (rs) -> {
 					PriceSchedule s  = new PriceSchedule(rs.getInt("schedule_id"), rs.getString("s_name"), 
 							rs.getString("s_start"), rs.getString("s_end"), rs.getString("s_days"));

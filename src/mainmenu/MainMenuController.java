@@ -11,6 +11,7 @@ import image.ImageSourceType;
 import image.ImageType;
 import image.ItemImage;
 import item.edit.EditBeerController;
+import item.price.EditPriceScheduleController;
 import item.price.EditPriceTypeController;
 import item.price.PriceTypeListViewController;
 import javafx.collections.FXCollections;
@@ -357,6 +358,37 @@ public class MainMenuController {
 		
 	}
 	
+	@FXML
+	private void editPriceScheduleButton() {
+		try {
+			EditPriceScheduleController controller = launchEditScheduleWindow();
+			//editBeerController.beerItem = new BeerMenuItem();
+			ArrayList<PriceSchedule> scheduleList = new ArrayList<PriceSchedule>();
+			MySqlManager sql = new MySqlManager();
+			Connection conn = null;
+			try {
+				conn = sql.connect();
+				String queryString  = "SELECT * FROM schedule WHERE active = 1 ORDER BY name ASC;";
+				sql.runQuery(conn, queryString, (rs) -> {
+					PriceSchedule s  = new PriceSchedule(rs.getInt("id"), rs.getString("name"), 
+							rs.getString("time_start"), rs.getString("time_end"), rs.getString("days_string"));
+					scheduleList.add(s);
+				});
+				conn.close();
+			} catch (CJCommunicationsException e1) {
+				e1.printStackTrace();
+				System.out.println("not connected, aborting");
+				return;
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			controller.scheduleList = scheduleList;
+			controller.setLayoutFields();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	@FXML
 	private void addBeerButton() {
@@ -461,6 +493,40 @@ public class MainMenuController {
 			Stage stage = new Stage();
 			stage.setScene(scene);
 			stage.setTitle("Edit Price Types");
+			stage.setOnCloseRequest( event ->
+		    {
+		    	stage.close();
+		        //refresh all beers list
+		    	try {
+		    		refreshConnection();
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    	}
+		    });
+
+			stage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return controller;
+	}
+	
+	private EditPriceScheduleController launchEditScheduleWindow() {
+		EditPriceScheduleController controller = null;
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("/item/price/EditPriceSchedule.fxml"));
+			VBox vBox = loader.load();
+			controller = loader.getController();
+			
+			vBox.setUserData(controller);
+			
+			Scene scene = new Scene(vBox);
+			
+			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.setTitle("Edit Price Schedules");
 			stage.setOnCloseRequest( event ->
 		    {
 		    	stage.close();
