@@ -14,6 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
+import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
@@ -26,7 +27,7 @@ public class EditImageController {
 	public ArrayList<ItemImage> imageList;
 	public ObservableList<ImageType> imageTypeList;
 	public ObservableList<ImageSourceType> imageSourceTypeList;
-	private String errorMessage;
+	//private String errorMessage;
 
 	
 	@FXML
@@ -155,14 +156,14 @@ public class EditImageController {
 		}
 		ImageType type = imageTypeList.get(0);
 		for (ImageType t : imageTypeList) {
-			if (t.name.contentEquals("Logo")) {
+			if (t.name.contentEquals("Beer Logo")) {
 				type = t;
 				break;
 			}
 		}
 		ImageSourceType sourcetype = imageSourceTypeList.get(0);
 		for (ImageSourceType t : imageSourceTypeList) {
-			if (t.name.contentEquals("Logo")) {
+			if (t.name.contentEquals("Local")) {
 				sourcetype = t;
 				break;
 			}
@@ -184,19 +185,20 @@ public class EditImageController {
 	}
 	
 	public boolean saveImageRecords() {
-		errorMessage = "";
+		//errorMessage = "";
+		FieldChecker fc = new FieldChecker();
 		ObservableList<VBox> vBoxList =  imageListView.getItems();
 		imageList.clear();
 		for ( int i = 0 ; i < vBoxList.size() ; i++ ) {
 		//for (VBox view : pricesListView.getItems()) {
 			ImageItemListViewLayoutController itemController = (ImageItemListViewLayoutController) vBoxList.get(i).getUserData();
-			itemController.itemImage.imageSrc = checkImageSrc(itemController.imageSrc);
+			itemController.itemImage.imageSrc = fc.imageSrcCheck(itemController.imageSrc);
 			itemController.itemImage.imageType = itemController.imageTypeDropdown.getValue();
 			itemController.itemImage.imageSourceType = itemController.imageSourceTypeDropdown.getValue();
 			itemController.itemImage.rank = i + 1;
 			itemController.itemImage.enabled = (itemController.enabled.isSelected()) ? 1 : 0 ;
-			if (errorMessage.length() > 0) {
-				Alert alert = new Alert(AlertType.ERROR, errorMessage);
+			if (fc.errorMessage.length() > 0) {
+				Alert alert = new Alert(AlertType.ERROR, fc.errorMessage);
 				alert.showAndWait();
 				return false;
 			}
@@ -243,34 +245,4 @@ public class EditImageController {
 		}
 		return true;
 	}
-	
-	public String checkImageSrc(TextField tb) {
-		String retVal = "";
-		if (tb.getText().trim().length() == 0) {
-			errorMessage += "\nThe image source is empty";
-			return retVal;
-		}
-		return tb.getText().trim().replace("'", "''");
-	}
-	
-	public double priceCheck(TextField price) {
-		double retVal = 0;
-		try {
-			retVal = Double.valueOf(price.getText());
-		} catch (Exception e) {
-			errorMessage = "decimal in a price or number in size is not formatted correctly";
-		}
-		return retVal;
-	}
-	public int sizeCheck(TextField size) {
-		int retVal = 0;
-		try {
-			retVal = Integer.valueOf(size.getText());
-		} catch (Exception e) {
-			errorMessage = "decimal in a price or number in size is not formatted correctly";
-		}
-		return retVal;
-	}
-	
-	
 }

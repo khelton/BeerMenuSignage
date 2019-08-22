@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import menulayouts.grid2x10.Item2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
+import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPriceType;
@@ -83,7 +84,7 @@ public class EditBeerController {
 	
 	public Item2X10Controller previewItemController;
 	
-	private String errorMessage;
+	//private String errorMessage;
 	
 	//Required constructor that is empty
 	public EditBeerController() {}
@@ -157,10 +158,6 @@ public class EditBeerController {
 			Connection conn = null;
 			try {
 				conn = sql.connect();
-				/*String queryString  = "SELECT * FROM price_type WHERE active = 1 ORDER BY id DESC;";
-				sql.runQuery(conn, queryString, (rs) -> {
-					priceTypeList.add(new ItemPriceType(rs.getInt("id"), rs.getString("name")));
-				});*/
 				String queryString  = "SELECT price_type.*, "
 						+ "s.name as 's_name', s.days_string as 's_days', "
 						+ "s.time_start as 's_start', s.time_end as 's_end' "
@@ -335,21 +332,23 @@ public class EditBeerController {
 	}
 	
 	public boolean saveRecord() {
-		errorMessage = "";
-		
-		checkBeerName();
-		String beerNameColorHex = "#" + Integer.toHexString(beerNameColor.getValue().hashCode());
-		String beerPourColorHex = "#" + Integer.toHexString(srmColor.getValue().hashCode());
-		String beerNotesColorHex = "#" + Integer.toHexString(notesColor.getValue().hashCode());
-		beerItem = new BeerMenuItem(idCheck(), fixText(beerName), beerNameColorHex, fixText(company),
-				fixText(notes), fixText(style), abvCheck(), ibuCheck(), 0, beerPourColorHex);
+		//errorMessage = "";
+		FieldChecker fc = new FieldChecker();
+		fc.beerNameCheck(beerName);
+		String beerNameColorHex = FieldChecker.getHexColor(beerNameColor);
+		//System.out.println(beerNameColorHex);
+		//String beerNameColorHex = "#" + Integer.toHexString(beerNameColor.getValue().hashCode());
+		String beerPourColorHex = FieldChecker.getHexColor(srmColor);
+		String beerNotesColorHex = FieldChecker.getHexColor(notesColor);
+		beerItem = new BeerMenuItem(fc.idCheck(beerId), fc.fixText(beerName), beerNameColorHex, fc.fixText(company),
+				fc.fixText(notes), fc.fixText(style), fc.abvCheck(abv), fc.ibuCheck(ibu), 0, beerPourColorHex);
 		beerItem.notesColor = beerNotesColorHex;
 				//priceCheck(price1, 1), sizeCheck(price1Size, 1), 
 				//priceCheck(price2, 2), sizeCheck(price2Size, 2));
 		
-		if (errorMessage.trim().length() > 0) {
-			errorMessage += "\n\nPlease fix these errors and hit save again";
-			Alert alert = new Alert(AlertType.ERROR, errorMessage);
+		if (fc.errorMessage.trim().length() > 0) {
+			fc.errorMessage += "\n\nPlease fix these errors and hit save again";
+			Alert alert = new Alert(AlertType.ERROR, fc.errorMessage);
 			alert.showAndWait();
 			return false;
 		}
@@ -396,47 +395,6 @@ public class EditBeerController {
 						+ "beer_pour_color = '" + beerItem.beerPourColor + "' WHERE id = " + beerItem.id + ";";
 				sql.runInsertQuery(conn, sqlQuery);
 				
-				//int priceId = 0;
-				//ArrayList<ItemPrice> tempPriceList = new ArrayList<ItemPrice>();
-				/*
-				for (ItemPrice p : beerItem.priceList) {
-					ItemPrice tempPrice = null;
-					sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND price_type_id = " + p.priceTypeId 
-							+ " AND size = " + p.size +";";
-					sql.runQuery(conn, sqlQuery, (rs) -> {
-						 tempPrice = new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size"), 
-								rs.getInt("price_type_id"), rs.getString("price_type_name"));
-					});
-					//priceId = tempPriceList.get(0).id;
-					if (tempPrice != null) {
-						sqlQuery = "UPDATE price SET price = " + p.price + ", size = " + p.size + ", `rank` = " + p.rank + ", enabled = " + p.enabled + " "
-								+ "WHERE id = " +  p.id + ";";
-					} else {
-						sqlQuery = "INSERT INTO price (beer_id, price, size, price_type_id, rank, enabled) VALUES "
-								+ "('" + beerItem.id + "', '" + p.price + "', '" + p.size + "', '" + p.priceType.id + "', '" + p.rank + "', '" + p.enabled + "');";
-					}
-					sql.runInsertQuery(conn, sqlQuery);
-				}*/
-				/*
-				tempPriceList.remove(0);
-				
-				sqlQuery = "SELECT * FROM price WHERE beer_id = " + beerItem.id + " AND size = " + beerItem.price2Size + ";";
-				sql.runQuery(conn, sqlQuery, (rs) -> {
-					tempPriceList.add(new ItemPrice(rs.getInt("id"), rs.getInt("beer_id"), rs.getDouble("price"), rs.getInt("size"), 
-							rs.getInt("price_type_id"), rs.getString("price_type_name")));
-				});
-				priceId = tempPriceList.get(0).id;
-				if (priceId > 0) {
-					sqlQuery = "UPDATE price SET price = " + beerItem.price2 + ", size = " + beerItem.price2Size + " "
-							+ "WHERE id = " +  priceId + ";";
-				} else {
-					sqlQuery = "INSERT INTO price (beer_id, price, size) VALUES "
-							+ "('" + beerItem.id + "', '" + beerItem.price2 + "', '" + beerItem.price2Size + "');";
-				}
-				sql.runInsertQuery(conn, sqlQuery);
-				*/
-				
-				//use price list, update prices
 				
 				conn.close();
 			} catch (Exception e) {
@@ -451,83 +409,6 @@ public class EditBeerController {
 		return true;
 	}
 	
-	
-	
-	public int idCheck() {
-		int retVal = 0;
-		if (beerId.getText().trim().length() == 0)
-			return retVal;
-		if (beerItem != null) {
-			return beerItem.id;
-		}
-		try {
-			retVal = Integer.valueOf(beerId.getText());
-		} catch (Exception e) {
-			// do nothing, this means we need to add the beer to the db
-		}
-		return retVal;
-	}
-	public double abvCheck() {
-		double retVal = 0;
-		try {
-			retVal = Double.valueOf(abv.getText());
-		} catch (Exception e) {
-			errorMessage += "Not a valid decimal in ABV field";
-		}
-		return retVal;
-	}
-	public int ibuCheck() {
-		int retVal = 0;
-		try {
-			retVal = Integer.valueOf(ibu.getText());
-		} catch (Exception e) {
-			// do nothing, this is not required
-			//errorMessage += "\nNot a valid number in IBU field";
-		}
-		return retVal;
-	}
-	/*
-	 * implement srmCheck
-	 */
-	/*
-	public int srmCheck() {
-		int retVal = 0;
-		try {
-			retVal = Integer.valueOf(srmText.getText());
-		} catch (Exception e) {
-			// do nothing, this is not required
-			//errorMessage += "\nNot a valid number in IBU field";
-		}
-		return retVal;
-	}*/
-	public double priceCheck(TextField price, int priceNumber) {
-		double retVal = 0;
-		try {
-			retVal = Double.valueOf(price.getText());
-		} catch (Exception e) {
-			errorMessage += "\nNot a valid decimal in Price " + priceNumber + " field";
-		}
-		return retVal;
-	}
-	public int sizeCheck(TextField size, int sizeNumber) {
-		int retVal = 0;
-		try {
-			retVal = Integer.valueOf(size.getText());
-		} catch (Exception e) {
-			errorMessage += "\nNot a valid number in Size " + sizeNumber + " field";
-		}
-		return retVal;
-	}
-	public boolean checkBeerName() {
-		if (this.beerName.getText().trim().length() == 0) {
-			errorMessage += "\nThe beer must have a name";
-			return false;
-		}
-		return true;
-	}
-	public String fixText(TextField text) {
-		return text.getText().replace("'", "\\'");
-	}
 	
 	@FXML
 	public void beerNameColorChanged() {

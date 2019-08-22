@@ -14,6 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
+import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
@@ -25,7 +26,7 @@ public class EditPriceController {
 	public BeerMenuItem beerItem;
 	public ArrayList<ItemPrice> priceList;
 	public ObservableList<ItemPriceType> priceTypeList;
-	private String errorMessage;
+	//private String errorMessage;
 
 	
 	@FXML
@@ -173,19 +174,20 @@ public class EditPriceController {
 	}
 	
 	public boolean savePriceRecords() {
-		errorMessage = "";
+		//errorMessage = "";
+		FieldChecker fc = new FieldChecker();
 		ObservableList<VBox> vBoxList =  pricesListView.getItems();
 		priceList.clear();
 		for ( int i = 0 ; i < vBoxList.size() ; i++ ) {
 		//for (VBox view : pricesListView.getItems()) {
 			PriceItemListViewLayoutController itemController = (PriceItemListViewLayoutController) vBoxList.get(i).getUserData();
-			itemController.itemPrice.price = priceCheck(itemController.price);
-			itemController.itemPrice.size = sizeCheck(itemController.priceSize);
+			itemController.itemPrice.price = fc.priceCheck(itemController.price);
+			itemController.itemPrice.size = fc.sizeCheck(itemController.priceSize);
 			itemController.itemPrice.priceType = itemController.priceTypeDropdown.getValue();
 			itemController.itemPrice.rank = i + 1;
 			itemController.itemPrice.enabled = (itemController.enabled.isSelected()) ? 1 : 0 ;
-			if (errorMessage.length() > 0) {
-				Alert alert = new Alert(AlertType.ERROR, errorMessage);
+			if (fc.errorMessage.length() > 0) {
+				Alert alert = new Alert(AlertType.ERROR, fc.errorMessage);
 				alert.showAndWait();
 				return false;
 			}
@@ -229,25 +231,6 @@ public class EditPriceController {
 			return false;
 		}
 		return true;
-	}
-	
-	public double priceCheck(TextField price) {
-		double retVal = 0;
-		try {
-			retVal = Double.valueOf(price.getText());
-		} catch (Exception e) {
-			errorMessage = "decimal in a price or number in size is not formatted correctly";
-		}
-		return retVal;
-	}
-	public int sizeCheck(TextField size) {
-		int retVal = 0;
-		try {
-			retVal = Integer.valueOf(size.getText());
-		} catch (Exception e) {
-			errorMessage = "decimal in a price or number in size is not formatted correctly";
-		}
-		return retVal;
 	}
 	
 	

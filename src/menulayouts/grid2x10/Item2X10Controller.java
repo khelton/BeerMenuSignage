@@ -141,21 +141,13 @@ public class Item2X10Controller implements IDisplayMenuItem {
 						logoWrapper.maxWidth(iwidth);
 						logoWrapper.prefWidth(iwidth);
 						logoWrapper.minWidth(iwidth);
+						logoWrapper.setStyle("-fx-background-color: #FFFFFF");
 					});
 					t.start();
+				} else {
+					logoWrapper.setStyle("-fx-background-color: #555555");
 				}
-			} /*else {
-				File file = new File("/home/pi/BeerMenu/images/karl_mosaic.jpeg");
-				Image image = new Image(file.toURI().toString());
-				logo.setPreserveRatio(true);
-				logo.setImage(image);
-				logo.maxWidth(98);
-				logo.prefWidth(98);
-				logo.minWidth(98);
-				logoWrapper.maxWidth(98);
-				logoWrapper.prefWidth(98);
-				logoWrapper.minWidth(98);
-			}*/
+			} 
 		} 
 	}
 

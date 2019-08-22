@@ -17,6 +17,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
+import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
@@ -28,7 +29,7 @@ public class EditPriceScheduleController {
 	
 	public PriceSchedule schedule;
 	public ArrayList<PriceSchedule> scheduleList;
-	private String errorMessage;
+	//private String errorMessage;
 
 	
 	@FXML
@@ -96,37 +97,7 @@ public class EditPriceScheduleController {
 			e.printStackTrace();
 		}
 	}
-	/*
-	@FXML
-	public void moveUpButtonClicked() {
-		int selectedIndex = priceTypeListView.getSelectionModel().getSelectedIndex();
-		if (selectedIndex == 0) {
-			return; // we can't move the price up, its the first one already
-		}
-		ObservableList<VBox> allPriceTypeLayouts = priceTypeListView.getItems();
-		VBox itemSelected = allPriceTypeLayouts.get(selectedIndex);
-		VBox item2 = allPriceTypeLayouts.get(selectedIndex - 1);
-		allPriceTypeLayouts.set(selectedIndex - 1, itemSelected);
-		allPriceTypeLayouts.set(selectedIndex, item2);
-		
-		priceTypeListView.getSelectionModel().select(itemSelected);
-	}
-	@FXML
-	public void moveDownButtonClicked() {
-		int selectedIndex = priceTypeListView.getSelectionModel().getSelectedIndex();
-		int count = priceTypeListView.getItems().size();
-		if (selectedIndex == count - 1) {
-			return; // we can't move the price down, its the last one already
-		}
-		ObservableList<VBox> allPriceLayouts = priceTypeListView.getItems();
-		VBox itemSelected = allPriceLayouts.get(selectedIndex);
-		VBox item2 = allPriceLayouts.get(selectedIndex - 1);
-		allPriceLayouts.set(selectedIndex + 1, itemSelected);
-		allPriceLayouts.set(selectedIndex, item2);
-		
-		priceTypeListView.getSelectionModel().select(itemSelected);
-	}
-	*/
+
 	@FXML
 	public void deleteButtonClicked() {
 		if (scheduleListView.getSelectionModel().getSelectedItem() == null) {
@@ -170,18 +141,19 @@ public class EditPriceScheduleController {
 	}
 	
 	public boolean saveRecords() {
-		errorMessage = "";
+		//errorMessage = "";
+		FieldChecker fc = new FieldChecker();
 		ObservableList<VBox> vBoxList =  scheduleListView.getItems();
 		scheduleList.clear();
 		for ( int i = 0 ; i < vBoxList.size() ; i++ ) {
 		//for (VBox view : pricesListView.getItems()) {
 			PriceScheduleListViewController itemController = (PriceScheduleListViewController) vBoxList.get(i).getUserData();
-			itemController.schedule.name = nameCheck(itemController.name);
-			itemController.schedule.startTime = timeCheck(itemController.startTime);
-			itemController.schedule.endTime = timeCheck(itemController.endTime);
-			itemController.schedule.daysEnabledString = getDays(itemController);
-			if (errorMessage.length() > 0) {
-				Alert alert = new Alert(AlertType.ERROR, errorMessage);
+			itemController.schedule.name = fc.nameCheck(itemController.name);
+			itemController.schedule.startTime = fc.timeCheck(itemController.startTime);
+			itemController.schedule.endTime = fc.timeCheck(itemController.endTime);
+			itemController.schedule.daysEnabledString = fc.getDays(itemController);
+			if (fc.errorMessage.length() > 0) {
+				Alert alert = new Alert(AlertType.ERROR, fc.errorMessage);
 				alert.showAndWait();
 				return false;
 			}
@@ -232,43 +204,4 @@ public class EditPriceScheduleController {
 		}
 		return true;
 	}
-	
-	public LocalTime timeCheck(TextField text) {
-		LocalTime time = null;
-		String s = text.getText().trim().replace("'", "\\'");
-		if (s.length() == 0) {
-			errorMessage += "Time is empty";
-			return time;
-		}
-		try {
-			time = LocalTime.parse(s);
-		} catch (Exception e) {
-			e.printStackTrace();
-			errorMessage += "\nTime couldn't be parsed";
-		}
-		
-		return time;
-	}
-
-	public String getDays(PriceScheduleListViewController itemController) {
-		String retVal = "";
-		retVal += (itemController.sun.isSelected()) ? "1" : "0";
-		retVal += (itemController.mon.isSelected()) ? "1" : "0";
-		retVal += (itemController.tue.isSelected()) ? "1" : "0";
-		retVal += (itemController.wed.isSelected()) ? "1" : "0";
-		retVal += (itemController.thu.isSelected()) ? "1" : "0";
-		retVal += (itemController.fri.isSelected()) ? "1" : "0";
-		retVal += (itemController.sat.isSelected()) ? "1" : "0";
-		
-		return retVal;
-	}
-	
-	public String nameCheck(TextField text) {
-		String retVal = text.getText().trim().replace("'", "\\'");
-		if (retVal.length() == 0)
-			errorMessage += "name is empty";
-		
-		return retVal;
-	}	
-	
 }
