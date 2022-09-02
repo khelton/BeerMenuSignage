@@ -27,8 +27,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import menulayouts.grid2x10.Item2X10Controller;
-import menulayouts.grid2x10.Menu2X10Controller;
+import menulayouts.grid2x10x1price.Item2X10Controller;
+import menulayouts.grid2x10x1price.Menu2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
 import menulayouts.grid4x5.Menu4X5Controller;
 import mysql.MySqlManager;
@@ -284,7 +284,7 @@ public class MainMenuController {
 			if (activeBeersListView == null)
 				return;
 			FXMLLoader menuLoader = new FXMLLoader();
-			menuLoader.setLocation(getClass().getResource("/menulayouts/grid2x10/Menu.fxml"));
+			menuLoader.setLocation(getClass().getResource("/menulayouts/grid2x10x1price/Menu.fxml"));
 			GridPane menuLayout = menuLoader.load();
 			Menu2X10Controller menuController = menuLoader.getController();
 			menuController.setLayout(activeBeersListView.getItems());

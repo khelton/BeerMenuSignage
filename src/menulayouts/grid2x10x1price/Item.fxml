@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="108.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="menulayouts.grid2x10x1price.Item2X10Controller">
+   <children>
+      <VBox alignment="CENTER" maxHeight="98.0" style="-fx-background-color: #333333;">
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+         <children>
+            <VBox>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <children>
+                  <HBox>
+                     <children>
+                        <VBox fx:id="logoWrapper" alignment="CENTER" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" style="-fx-background-color: #555555;">
+                           <children>
+                              <ImageView fx:id="logo" fitHeight="98.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label fx:id="beerNumber" alignment="TOP_LEFT" contentDisplay="CENTER" maxWidth="50.0" text="20." textAlignment="CENTER" textFill="WHITE">
+                                       <font>
+                                          <Font name="Megan June" size="45.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="beerName" alignment="TOP_LEFT" text="Beer Name longer name" textFill="WHITE">
+                                       <font>
+                                          <Font name="Megan June" size="45.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label id="company" fx:id="company" text="Company" textFill="WHITE">
+                                       <font>
+                                          <Font name="Megan June" size="30.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Separator orientation="VERTICAL" prefHeight="200.0">
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Separator>
+                                    <Label id="notes" fx:id="notes" text="Notes" textFill="#ff5959">
+                                       <font>
+                                          <Font name="Megan June" size="30.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </VBox>
+                        <VBox alignment="TOP_RIGHT" maxWidth="350.0" minWidth="350.0">
+                           <children>
+                              <HBox alignment="BOTTOM_RIGHT">
+                                 <children>
+                                    <VBox alignment="BOTTOM_CENTER" prefWidth="100.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <Label id="beerStyle" fx:id="beerStyle" alignment="BOTTOM_RIGHT" contentDisplay="CENTER" text="Style" textAlignment="CENTER" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="Megan June" size="25.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="BOTTOM_CENTER">
+                                             <children>
+                                                <Label id="abv" fx:id="abv" text="15.0" textFill="#55aaff">
+                                                   <font>
+                                                      <Font name="Megan June" size="50.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <Label alignment="BOTTOM_LEFT" text="\%" textFill="#55aaff">
+                                                   <font>
+                                                      <Font name="Megan June" size="40.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <Separator orientation="VERTICAL" prefHeight="200.0">
+                                       <HBox.margin>
+                                          <Insets bottom="15.0" left="5.0" right="5.0" top="15.0" />
+                                       </HBox.margin>
+                                    </Separator>
+                                    <VBox alignment="CENTER" prefHeight="98.0" prefWidth="110.0">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <Label id="ounce1" fx:id="ounce1" alignment="BOTTOM_LEFT" text="16" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="Megan June" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="oz" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="Megan June" size="30.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <Label id="price1" text="\$" textFill="#c5a800">
+                                                   <font>
+                                                      <Font name="Megan June" size="40.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets right="4.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <Label id="price1" fx:id="price1" text="9.00" textFill="#c5a800">
+                                                   <font>
+                                                      <Font name="Megan June" size="50.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

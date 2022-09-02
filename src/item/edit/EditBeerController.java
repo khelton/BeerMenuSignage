@@ -25,7 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import menulayouts.grid2x10.Item2X10Controller;
+import menulayouts.grid2x10x1price.Item2X10Controller;
 import menulayouts.grid4x5.Item4X5Controller;
 import mysql.FieldChecker;
 import mysql.MySqlManager;
