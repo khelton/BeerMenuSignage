@@ -9,7 +9,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="108.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="menulayouts.grid2x10.Item2X10Controller">
+<AnchorPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="menulayouts.grid2x10.Item2X10Controller">
+<VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
    <children>
       <VBox alignment="CENTER" maxHeight="98.0" style="-fx-background-color: #333333;">
          <VBox.margin>
@@ -203,3 +204,4 @@
       </VBox>
    </children>
 </VBox>
+</AnchorPane>

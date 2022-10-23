@@ -2,31 +2,32 @@ package menulayouts.grid2x10;
 
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.temporal.TemporalField;
-import java.util.Calendar;
-
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+import menulayouts.IMenuInfo;
+import menulayouts.ItemBaseController;
+import menulayouts.MenuBaseController;
+import menulayouts.grid2x10x1price.Item2X10X1PriceController;
 import types.BeerMenuItem;
 
 
-public class Menu2X10Controller {
+public class Menu2X10Controller extends MenuBaseController implements IMenuInfo {
 	
-	@FXML
-	public GridPane layoutGrid;
+	public static final String fxmlLoaderString = "/menulayouts/grid2x10/Menu.fxml";
 	
+	public static final String menuName = "Grid 2 X 10";
+	public static final String menuDesc = "2 Columns by 10 Rows of beers";
+	
+	public static String itemFxmlLoaderString = Item2X10X1PriceController.fxmlLoaderString;
+	
+	// price update time variables
 	Timeline checkPriceInterval = null;
 	LocalTime lastCheckedTime = null;
 	
@@ -37,17 +38,39 @@ public class Menu2X10Controller {
 	public void initialize() {
 	}
 	
-	public void setLayout(ObservableList<BeerMenuItem> activeBeerList) {
+	@Override
+	public String getName() {
+		return menuName;
+	}
+
+	@Override
+	public String getDescription() {
+		return menuDesc;
+	}
+	
+	@Override
+	public String getItemFxmlLoaderString() {
+		return itemFxmlLoaderString;
+	}
+
+	@Override
+	public ObservableList<Node> getItemLayouts () {
+		return layoutGrid.getChildren();
+	}
+	
+	@Override
+	public void fillLayout(ObservableList<BeerMenuItem> activeBeerList) {
 		
 		//if (this.activeBeersListView == null)
 		//	return;
 		//ObservableList<BeerMenuItem> activeBeerList = this.activeBeersListView.getItems();
 		int gridRows = layoutGrid.getRowConstraints().size();
 		int gridCols = layoutGrid.getColumnConstraints().size();
-		int cellWidth = (int) (layoutGrid.getWidth() / gridCols);
-		int cellHeight = (int) (layoutGrid.getHeight() / gridRows);
+		//int cellWidth = (int) (layoutGrid.getWidth() / gridCols);
+		//int cellHeight = (int) (layoutGrid.getHeight() / gridRows);
 		for (ColumnConstraints cc : layoutGrid.getColumnConstraints()) {
-			cc.setMinWidth(960);
+			cc.setMinWidth(960 - 200);
+			cc.setPrefWidth(960);
 			cc.setMaxWidth(960);
 		}
 		for (RowConstraints rc : layoutGrid.getRowConstraints()) {
@@ -65,12 +88,12 @@ public class Menu2X10Controller {
 				} else {
 					item = activeBeerList.get(i-1);
 				}
-				VBox beerLayout = null;
+				AnchorPane beerLayout = null;
 				try {
 					FXMLLoader beerLoader = new FXMLLoader();
-					beerLoader.setLocation(getClass().getResource("/menulayouts/grid2x10/Item.fxml"));
+					beerLoader.setLocation(getClass().getResource(itemFxmlLoaderString));
 					beerLayout = beerLoader.load();
-					Item2X10Controller controller = beerLoader.getController();
+					ItemBaseController controller = beerLoader.getController();
 					beerLayout.setUserData(controller);
 					//fillBeerLayout(beerLayout, controller, item, i);
 					controller.beerItem = item;
@@ -84,35 +107,14 @@ public class Menu2X10Controller {
 					layoutGrid.add(beerLayout, x, y);
 			}
 		}
-		lastCheckedTime = LocalTime.now();
-		checkPriceInterval = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
+		
+		setupPriceIntervalTimer();
+		
+		if (showSideFeatures) {
+			Platform.runLater(() -> {
+				setupSideFeaturePane();
+			});
+		}
+	}
 
-		    @Override
-		    public void handle(ActionEvent event) {
-		    	LocalTime now = LocalTime.now();
-		    	if(now.getMinute() != lastCheckedTime.getMinute()) {
-		    		System.out.println("Updating Prices");
-		    		updatePrices();
-		    		lastCheckedTime = now;
-		    	}
-		    }
-		}));
-		checkPriceInterval.setCycleCount(Timeline.INDEFINITE);
-		checkPriceInterval.play();
-	}
-	
-	public void updatePrices() {
-		ObservableList<Node> gridChildren = layoutGrid.getChildren();
-		for (Node n : gridChildren) {
-			Item2X10Controller c = (Item2X10Controller)n.getUserData();
-			c.setPrices(c.beerItem);
-		}
-	}
-	
-	public void stopPriceIntervalTimer() {
-		if (checkPriceInterval != null) {
-			checkPriceInterval.stop();
-			checkPriceInterval = null;
-		}
-	}
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Build BeerMenuSignage.jar">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="./build"/>
+    <property name="dir.jarfile" value="${dir.buildfile}"/>
+	<property name="dir.libfolder" value="SignageMenu_lib"/>
+	<property name="ver.number" value="110"/>
+	<property name="filename" value="SignageMenu"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/${filename}_v${ver.number}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="application.Main"/>
+                <attribute name="Class-Path" value=". ${dir.libfolder}/javafx.web.jar ${dir.libfolder}/javafx.swing.jar ${dir.libfolder}/javafx.media.jar ${dir.libfolder}/javafx.graphics.jar ${dir.libfolder}/javafx.fxml.jar ${dir.libfolder}/javafx.controls.jar ${dir.libfolder}/javafx.base.jar ${dir.libfolder}/javafx-swt.jar ${dir.libfolder}/mysql-connector-java-8.0.30.jar"/>
+            </manifest>
+            <fileset dir="/home/kevin/git/BeerMenu/BeerMenuSignage/bin"/>
+        </jar>
+        <delete dir="${dir.jarfile}/${dir.libfolder}"/>
+        <mkdir dir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.web.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.swing.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.media.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.graphics.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.fxml.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.controls.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx.base.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/javafx/javafx-sdk-18.0.2/lib/javafx-swt.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+        <copy file="/home/kevin/java/mysql-connector/mysql-connector-java-8.0.30/mysql-connector-java-8.0.30.jar" todir="${dir.jarfile}/${dir.libfolder}"/>
+    </target>
+</project>

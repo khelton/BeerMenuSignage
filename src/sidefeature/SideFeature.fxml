@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorPane" style="-fx-background-color: #333333;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sidefeature.SideFeatureController">
+   <children>
+      <Pane fx:id="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox mouseTransparent="true" prefWidth="400.0">
+               <children>
+                  <Label fx:id="titleLabel" text="Spotlight Title" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="45.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <ImageView fx:id="image" fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../../../../java/2.jpg" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </VBox>
+                  <Label fx:id="description" text="This is the description that I decided to put on this panel. this way we can see what a feature's description could be. we could also add other fields to this view" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label />
+               </children>
+            </VBox>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

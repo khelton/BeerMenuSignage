@@ -1,6 +1,5 @@
 package mainmenu;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import image.ItemImage;
 import item.edit.EditBeerController;
 import item.price.EditPriceScheduleController;
 import item.price.EditPriceTypeController;
-import item.price.PriceTypeListViewController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,13 +22,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import menulayouts.grid2x10x1price.Item2X10Controller;
-import menulayouts.grid2x10x1price.Menu2X10Controller;
-import menulayouts.grid4x5.Item4X5Controller;
-import menulayouts.grid4x5.Menu4X5Controller;
+import menulayouts.ItemBaseController;
+import menulayouts.MenuBaseController;
+import menulayouts.grid2x10.Menu2X10Controller;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
 import types.ItemPrice;
@@ -39,6 +36,8 @@ import types.PriceSchedule;
 
 
 public class MainMenuController {
+	  
+	public static final String fxmlLoaderString = "/mainmenu/MainMenu.fxml";
 	
 	public String dbName = "churchill";
 	
@@ -284,10 +283,11 @@ public class MainMenuController {
 			if (activeBeersListView == null)
 				return;
 			FXMLLoader menuLoader = new FXMLLoader();
-			menuLoader.setLocation(getClass().getResource("/menulayouts/grid2x10x1price/Menu.fxml"));
-			GridPane menuLayout = menuLoader.load();
-			Menu2X10Controller menuController = menuLoader.getController();
-			menuController.setLayout(activeBeersListView.getItems());
+			menuLoader.setLocation(getClass().getResource(Menu2X10Controller.fxmlLoaderString));
+			AnchorPane menuLayout = menuLoader.load();
+			//AnchorPane GridPane menuLayout = menuLoader.load();
+			MenuBaseController menuController = menuLoader.getController();
+			menuController.fillLayout(activeBeersListView.getItems());
 			Scene scene2 = new Scene(menuLayout);
 			//scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			Stage stage2 = new Stage();
@@ -421,31 +421,18 @@ public class MainMenuController {
 		
 	}
 	
-
-	/* TODO implement button and view to select/save pricetypes
-	@FXML
-	private void editPriceTypesButton()
-		// Open saved images window
-	}*/
-	
-	/* TODO implement button and view to select/save schedules
-	@FXML
-	private void editSchedulesButton()
-		// Open saved images window
-	}*/
-	
 	private EditBeerController launchEditBeerWindow() {
 		EditBeerController editBeerController = null;
 		try {
 			FXMLLoader editBeerLoader = new FXMLLoader();
-			editBeerLoader.setLocation(getClass().getResource("/item/edit/EditBeer.fxml"));
+			editBeerLoader.setLocation(getClass().getResource(EditBeerController.fxmlLoaderString));
 			VBox editBeerWindow = editBeerLoader.load();
 			editBeerController = editBeerLoader.getController();
 			
 			FXMLLoader beerLoader = new FXMLLoader();
-			beerLoader.setLocation(getClass().getResource("/menulayouts/grid2x10/Item.fxml"));
-			VBox beerLayout = beerLoader.load();
-			Item2X10Controller beerItemController = beerLoader.getController();
+			beerLoader.setLocation(getClass().getResource(Menu2X10Controller.itemFxmlLoaderString));
+			AnchorPane beerLayout = beerLoader.load();
+			ItemBaseController beerItemController = beerLoader.getController();
 			beerLayout.setUserData(beerItemController);
 			
 			editBeerController.previewPane.add(beerLayout, 0, 0);

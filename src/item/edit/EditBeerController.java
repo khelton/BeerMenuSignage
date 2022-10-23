@@ -25,8 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import menulayouts.grid2x10x1price.Item2X10Controller;
-import menulayouts.grid4x5.Item4X5Controller;
+import menulayouts.ItemBaseController;
 import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
@@ -35,6 +34,10 @@ import types.PriceSchedule;
 
 
 public class EditBeerController {
+	
+	
+	public static final String fxmlLoaderString = "/item/edit/EditBeer.fxml";
+	
 	
 	public BeerMenuItem beerItem;
 	
@@ -82,7 +85,7 @@ public class EditBeerController {
 	@FXML
 	public GridPane previewPane;
 	
-	public Item2X10Controller previewItemController;
+	public ItemBaseController previewItemController;
 	
 	//private String errorMessage;
 	

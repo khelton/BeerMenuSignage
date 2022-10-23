@@ -1,15 +1,10 @@
 package menulayouts.grid4x5;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import menulayouts.IDisplayMenuItem;

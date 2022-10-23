@@ -1,10 +1,5 @@
 package image;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
-
 public class ItemImage {
 	
 	public int id;

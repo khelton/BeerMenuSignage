@@ -1,4 +1,4 @@
-package menulayouts.grid2x10x1price;
+package menulayouts;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -11,13 +11,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import menulayouts.IDisplayMenuItem;
+import menulayouts.grid2x10.Item2X10Controller;
 import types.BeerMenuItem;
 import types.IMenuItem;
 import types.ItemPrice;
 
-
-public class Item2X10Controller implements IDisplayMenuItem {
+public abstract class ItemBaseController {
 	
 	@FXML
 	public Label beerNumber;
@@ -36,6 +35,10 @@ public class Item2X10Controller implements IDisplayMenuItem {
 	@FXML
 	public Label ounce1;
 	@FXML
+	public Label price2;
+	@FXML
+	public Label ounce2;
+	@FXML
 	public ImageView logo;
 	@FXML
 	public VBox logoWrapper;
@@ -44,14 +47,10 @@ public class Item2X10Controller implements IDisplayMenuItem {
 	
 	
 	
-	//Required constructor that is empty
-	public Item2X10Controller() {}
-	
 	@FXML
 	public void initialize() {
 		
 	}
-	
 	
 	
 	public void setLayout(IMenuItem item) {
@@ -93,6 +92,16 @@ public class Item2X10Controller implements IDisplayMenuItem {
 		} else {
 			price1.setText("NA");
 			ounce1.setText("NA");
+		}
+		
+		if ( this instanceof Item2X10Controller ) {
+			if (validPrices.size() > 1) {
+				price2.setText(""+ df.format(validPrices.get(1).price));
+				ounce2.setText(""+ validPrices.get(1).size);
+			} else {
+				price2.setText("NA");
+				ounce2.setText("NA");
+			}
 		}
 	}
 	
@@ -139,5 +148,4 @@ public class Item2X10Controller implements IDisplayMenuItem {
 		} 
 	}
 
-	
 }

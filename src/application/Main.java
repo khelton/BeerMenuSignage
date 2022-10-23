@@ -33,7 +33,7 @@ public class Main extends Application {
 		try {
 			VBox rootLayout = null;
 			FXMLLoader rootLoader = new FXMLLoader();
-			rootLoader.setLocation(getClass().getResource("/mainmenu/MainMenu.fxml"));
+			rootLoader.setLocation(getClass().getResource(MainMenuController.fxmlLoaderString));
 			rootLayout = rootLoader.load();
 			MainMenuController controller = rootLoader.getController();
 			Scene scene = new Scene(rootLayout);

@@ -11,14 +11,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
 import mysql.FieldChecker;
 import mysql.MySqlManager;
 import types.BeerMenuItem;
-import types.ItemPrice;
-import types.ItemPriceType;
 
 
 public class EditImageController {
